@@ -1,13 +1,18 @@
+//* Import axiosInstance
 import axiosInstance from '../utils/axiosInstance';
+
+//* Import types
 import type {
   RegisterCredentials,
   ApiResponse,
   LoginCredentials,
   GetUserResponse,
 } from '../types/global';
+
+//* Import axios
 import axios from 'axios';
 
-// register user
+//* register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/register', {
     name: credentials.name,
@@ -18,7 +23,7 @@ export const registerUser = async (credentials: RegisterCredentials): Promise<Ap
   return response.data;
 };
 
-// login user
+//* login user
 export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/login', {
     email: credentials.email,
@@ -28,13 +33,13 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
   return response.data;
 };
 
-// getting current user
+//* getting current user
 export const getCurrentUser = async (): Promise<GetUserResponse> => {
   const response = await axiosInstance.get('/api/v1/users/user-details');
   return response.data;
 };
 
-// checking if user is logged in
+//* checking if user is logged in
 export const isAuthenticated = async (): Promise<ApiResponse> => {
   try {
     const response = await axiosInstance.get('/api/v1/users/is-auth');
@@ -47,25 +52,25 @@ export const isAuthenticated = async (): Promise<ApiResponse> => {
   }
 };
 
-// logout user
+//* logout user
 export const logoutUser = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/logout');
   return response.data;
 };
 
-// send verification email
+//* send verification email
 export const sendVerificationEmail = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/send-verification-email');
   return response.data;
 };
 
-// verify user with otp
+//* verify user with otp
 export const verifyUser = async (otp: string): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
   return response.data;
 };
 
-// Send password reset email
+//* Send password reset email
 export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/send-pass-reset-email', {
     email,
@@ -73,7 +78,7 @@ export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse
   return response.data;
 };
 
-// Reset password with otp
+//* Reset password with otp
 export const resetPassword = async (
   email: string,
   otp: string,
