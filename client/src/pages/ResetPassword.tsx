@@ -6,6 +6,7 @@ const ResetPassword: FC = () => {
   const navigate = useNavigate();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
@@ -137,6 +138,8 @@ const ResetPassword: FC = () => {
               name="newPassword"
               placeholder="New Password"
               required
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-[#333A5C]/80 text-white rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none placeholder-indigo-300/70"
             />
           </div>
