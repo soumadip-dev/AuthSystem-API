@@ -64,3 +64,11 @@ export const verifyUser = async (otp: string): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
   return response.data;
 };
+
+// Send password reset email
+export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse> => {
+  const response = await axiosInstance.post('/api/v1/users/send-verification-email', {
+    email,
+  });
+  return response.data;
+};
