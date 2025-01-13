@@ -67,7 +67,7 @@ export const verifyUser = async (otp: string): Promise<ApiResponse> => {
 
 // Send password reset email
 export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse> => {
-  const response = await axiosInstance.post('/api/v1/users/send-verification-email', {
+  const response = await axiosInstance.post('/api/v1/users/send-pass-reset-email', {
     email,
   });
   return response.data;
