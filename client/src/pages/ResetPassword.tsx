@@ -4,7 +4,7 @@ import { assets } from '../assets/assets';
 
 const ResetPassword: FC = () => {
   const navigate = useNavigate();
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [email, setEmail] = useState('');
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
@@ -27,7 +27,7 @@ const ResetPassword: FC = () => {
 
     pasteArr.forEach((char, i) => {
       if (inputRefs.current[i]) {
-        inputRefs.current[i].value = char;
+        inputRefs.current[i]!.value = char;
       }
     });
     // Focus last filled box
@@ -35,10 +35,6 @@ const ResetPassword: FC = () => {
     if (lastIndex >= 0) {
       inputRefs.current[lastIndex]?.focus();
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // Submit logic here
   };
 
   return (
@@ -58,7 +54,7 @@ const ResetPassword: FC = () => {
           <p className="text-sm text-indigo-300/80">Enter your email to receive a reset link</p>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6">
           <div className="relative">
             <img
               src={assets.mail_icon}
