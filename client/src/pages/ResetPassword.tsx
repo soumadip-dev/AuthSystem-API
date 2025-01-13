@@ -1,19 +1,11 @@
-import { useContext, useRef, useState, type FC } from 'react';
+import { useRef, useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
-import { toast } from 'react-toastify';
-import { AppContext } from '../context/AppContext';
 
 const ResetPassword: FC = () => {
   const navigate = useNavigate();
   const inputRefs = useRef<HTMLInputElement[]>([]);
-  const context = useContext(AppContext);
   const [email, setEmail] = useState('');
-
-  if (!context) {
-    throw new Error('ResetPassword must be used within an AppContextProvider');
-  }
-  const { userData, isLoggedIn } = context;
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
