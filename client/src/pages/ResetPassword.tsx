@@ -1,4 +1,4 @@
-import { useContext, useState, type FC } from 'react';
+import { useContext, useRef, useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { toast } from 'react-toastify';
@@ -6,6 +6,7 @@ import { AppContext } from '../context/AppContext';
 
 const ResetPassword: FC = () => {
   const navigate = useNavigate();
+  const inputRefs = useRef<HTMLInputElement[]>([]);
   const context = useContext(AppContext);
   const [email, setEmail] = useState('');
 
@@ -13,6 +14,36 @@ const ResetPassword: FC = () => {
     throw new Error('ResetPassword must be used within an AppContextProvider');
   }
   const { userData, isLoggedIn } = context;
+
+  const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
+    const value = e.currentTarget.value;
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace' && !e.currentTarget.value && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const paste = e.clipboardData.getData('text').trim();
+    const pasteArr = paste.split('');
+
+    pasteArr.forEach((char, i) => {
+      if (inputRefs.current[i]) {
+        inputRefs.current[i].value = char;
+      }
+    });
+    // Focus last filled box
+    const lastIndex = Math.min(pasteArr.length, inputRefs.current.length) - 1;
+    if (lastIndex >= 0) {
+      inputRefs.current[lastIndex]?.focus();
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Submit logic here
@@ -61,6 +92,44 @@ const ResetPassword: FC = () => {
           </button>
         </form>
       </div>
+      {/* OTP input */}
+      <div className="bg-slate-900/90 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-2xl w-full sm:w-96 text-indigo-200">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-white bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text">
+            Reset Password OTP
+          </h2>
+          <p className="text-sm text-indigo-300/80">Enter the 6-digit code sent to your email</p>
+        </div>
+        <form className="space-y-6">
+          <div className="flex justify-between mb-4" onPaste={handlePaste}>
+            {Array(6)
+              .fill(0)
+              .map((_, index) => (
+                <input
+                  type="text"
+                  maxLength={1}
+                  key={index}
+                  required
+                  className="w-12 h-12 bg-[#333A5C]/80 text-white text-xl text-center rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none"
+                  ref={el => {
+                    if (el) inputRefs.current[index] = el;
+                  }}
+                  onInput={e => handleInput(e, index)}
+                  onKeyDown={e => handleKeyDown(e, index)}
+                />
+              ))}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+          >
+            Reset Password
+          </button>
+        </form>
+      </div>
+      {/* Enter new password */}
+
     </div>
   );
 };
