@@ -72,3 +72,17 @@ export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse
   });
   return response.data;
 };
+
+// Reset password with otp
+export const resetPassword = async (
+  email: string,
+  otp: string,
+  newPassword: string
+): Promise<ApiResponse> => {
+  const response = await axiosInstance.post('/api/v1/users/reset-password', {
+    email,
+    otp,
+    newPassword,
+  });
+  return response.data;
+};
