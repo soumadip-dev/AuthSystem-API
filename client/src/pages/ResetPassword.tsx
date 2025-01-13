@@ -129,7 +129,37 @@ const ResetPassword: FC = () => {
         </form>
       </div>
       {/* Enter new password */}
+      <div className="bg-slate-900/90 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-2xl w-full sm:w-96 text-indigo-200">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-white bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text">
+            New Password
+          </h2>
+          <p className="text-sm text-indigo-300/80">Enter your new password</p>
+        </div>
 
+        <form className="space-y-6">
+          <div className="relative">
+            <img
+              src={assets.lock_icon}
+              alt="password"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
+            />
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New Password"
+              required
+              className="w-full pl-12 pr-4 py-3 bg-[#333A5C]/80 text-white rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none placeholder-indigo-300/70"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+          >
+            Update Password
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
