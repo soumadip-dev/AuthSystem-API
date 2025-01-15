@@ -13,7 +13,7 @@ const EmailVerify: FC = () => {
   if (!context) {
     throw new Error('Navbar must be used within an AppContextProvider');
   }
-
+  const { userData, setUserData, isLoggedIn } = context;
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
     if (value && index < 5) {
@@ -53,9 +53,9 @@ const EmailVerify: FC = () => {
       if (response.success) {
         toast.success(response.message);
         // Update user data in context to set isVerified to true
-        if (context.userData) {
-          context.setUserData({
-            ...context.userData,
+        if (userData) {
+          setUserData({
+            ...userData,
             isVerified: true,
           });
         }
@@ -70,10 +70,10 @@ const EmailVerify: FC = () => {
   };
 
   useEffect(() => {
-    if (context.isLoggedIn && context.userData?.isVerified) {
+    if (isLoggedIn && userData?.isVerified) {
       navigate('/');
     }
-  }, [context.isLoggedIn, context.userData, navigate]);
+  }, [isLoggedIn, userData, navigate]);
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
