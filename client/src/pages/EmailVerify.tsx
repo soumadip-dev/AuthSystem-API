@@ -1,12 +1,18 @@
-import { useRef, type FC } from 'react';
+import { useContext, useRef, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { verifyUser } from '../api/authApi';
 import { toast } from 'react-toastify';
+import { AppContext } from '../context/AppContext';
 
 const EmailVerify: FC = () => {
   const navigate = useNavigate();
   const inputRefs = useRef<HTMLInputElement[]>([]);
+  const context = useContext(AppContext);
+
+  if (!context) {
+    throw new Error('Navbar must be used within an AppContextProvider');
+  }
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
@@ -46,7 +52,8 @@ const EmailVerify: FC = () => {
 
       if (response.success) {
         toast.success(response.message);
-        navigate('/login');
+
+        navigate('/');
       } else {
         toast.error(response.message);
       }
