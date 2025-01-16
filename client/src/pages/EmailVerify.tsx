@@ -1,6 +1,8 @@
 import { useRef, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
+import { verifyUser } from '../api/authApi';
+import { toast } from 'react-toastify';
 
 const EmailVerify: FC = () => {
   const navigate = useNavigate();
@@ -36,6 +38,24 @@ const EmailVerify: FC = () => {
     }
   };
 
+  const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+      const providedOtp = inputRefs.current.map(input => input.value).join('');
+      const response = await verifyUser(providedOtp);
+
+      if (response.success) {
+        toast.success(response.message);
+        navigate('/login');
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Verification failed. Please try again.');
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
@@ -53,7 +73,7 @@ const EmailVerify: FC = () => {
           <p className="text-sm text-indigo-300/80">Enter the 6-digit OTP sent to your email</p>
         </div>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleOtpSubmit}>
           <div className="flex justify-between mb-4" onPaste={handlePaste}>
             {Array(6)
               .fill(0)
