@@ -1,4 +1,4 @@
-import { useState, type FC, useContext } from 'react';
+import { useState, type FC, useContext, useEffect } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,7 @@ const Login: FC = () => {
 
   const context = useContext(AppContext);
   if (!context) throw new Error('Login must be used within an AppContextProvider');
-  const { setIsLoggedIn, setUserData, checkAuthAndFetchUser } = context;
+  const { setIsLoggedIn, setUserData, isLoggedIn, checkAuthAndFetchUser } = context;
 
   const handleRegister = async (credentials: RegisterCredentials) => {
     try {
@@ -101,6 +101,12 @@ const Login: FC = () => {
     if (strength >= 40) return 'bg-yellow-400';
     return 'bg-red-400';
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
