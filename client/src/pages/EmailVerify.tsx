@@ -1,4 +1,4 @@
-import { useContext, useRef, type FC } from 'react';
+import { useContext, useEffect, useRef, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { verifyUser } from '../api/authApi';
@@ -69,6 +69,11 @@ const EmailVerify: FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (context.isLoggedIn && context.userData?.isVerified) {
+      navigate('/');
+    }
+  }, [context.isLoggedIn, context.userData, navigate]);
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
