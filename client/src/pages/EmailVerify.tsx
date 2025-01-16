@@ -52,7 +52,13 @@ const EmailVerify: FC = () => {
 
       if (response.success) {
         toast.success(response.message);
-
+        // Update user data in context to set isVerified to true
+        if (context.userData) {
+          context.setUserData({
+            ...context.userData,
+            isVerified: true,
+          });
+        }
         navigate('/');
       } else {
         toast.error(response.message);
