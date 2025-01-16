@@ -58,3 +58,9 @@ export const sendVerificationEmail = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/send-verification-email');
   return response.data;
 };
+
+// verify user with otp
+export const verifyUser = async (otp: string): Promise<ApiResponse> => {
+  const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
+  return response.data;
+};
