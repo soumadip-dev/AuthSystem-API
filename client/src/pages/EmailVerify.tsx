@@ -4,7 +4,7 @@ import { assets } from '../assets/assets';
 
 const EmailVerify: FC = () => {
   const navigate = useNavigate();
-  const inputRefs = useRef<HTMLInputElement[]>([]); // ✅ Proper typing
+  const inputRefs = useRef<HTMLInputElement[]>([]);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     if (e.currentTarget.value) {
