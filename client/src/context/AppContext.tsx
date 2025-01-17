@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useEffect, useState } from 'react';
 import type { AppContextType, UserDataType } from '../types/global';
-import { getCurrentUser, isAuthenticated } from '../api/auth.api';
+import { getCurrentUser, isAuthenticated } from '../api/authApi';
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
