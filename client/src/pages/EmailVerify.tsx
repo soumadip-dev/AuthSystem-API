@@ -1,38 +1,50 @@
 import type { FC } from 'react';
 import { Navigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
+
 const EmailVerify: FC = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-200 to-purple-400">
+    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
         onClick={() => Navigate('/')}
         src={assets.logo}
         alt="logo"
         className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer hover:scale-105 transition-transform"
       />
-      <form className="bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm">
-        <h1 className="text-white text-2xl font-semibold text-center mb-4">Email Verify OTP</h1>
-        <p className="text-center mb-6 text-indigo-300">
-          Enter the 6-digit OTP sent to your email.
-        </p>
-        <div className="flex justify-between mb-8">
-          {Array(6)
-            .fill(0)
-            .map((_, index) => (
-              <input
-                type="text"
-                maxLength={1}
-                key={index}
-                required
-                className="w-12 h-12 bg-[#333A5C] text-white text-xl text-center rounded-md"
-              />
-            ))}
+
+      <div className="bg-slate-900/90 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-2xl w-full sm:w-96 text-indigo-200">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-white bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text">
+            Email Verification
+          </h2>
+          <p className="text-sm text-indigo-300/80">Enter the 6-digit OTP sent to your email</p>
         </div>
-        <button className="w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-full">
-          Verify Email
-        </button>
-      </form>
+
+        <form className="space-y-6">
+          <div className="flex justify-between mb-4">
+            {Array(6)
+              .fill(0)
+              .map((_, index) => (
+                <input
+                  type="text"
+                  maxLength={1}
+                  key={index}
+                  required
+                  className="w-12 h-12 bg-[#333A5C]/80 text-white text-xl text-center rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
+              ))}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+          >
+            Verify Email
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
+
 export default EmailVerify;
