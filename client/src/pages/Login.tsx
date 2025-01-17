@@ -6,7 +6,7 @@ import type { PasswordChecks, RegisterCredentials, LoginCredentials } from '../t
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppContext } from '../context/AppContext';
-import { registerUser, loginUser } from '../api/auth.api';
+import { registerUser, loginUser } from '../api/authApi';
 
 const Login: FC = () => {
   const navigate = useNavigate();
