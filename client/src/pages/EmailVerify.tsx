@@ -7,8 +7,15 @@ const EmailVerify: FC = () => {
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
-    if (e.currentTarget.value) {
+    const value = e.currentTarget.value;
+    if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace' && !e.currentTarget.value && index > 0) {
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -44,6 +51,7 @@ const EmailVerify: FC = () => {
                     if (el) inputRefs.current[index] = el;
                   }}
                   onInput={e => handleInput(e, index)}
+                  onKeyDown={e => handleKeyDown(e, index)}
                 />
               ))}
           </div>
