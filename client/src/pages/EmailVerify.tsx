@@ -1,9 +1,17 @@
-import type { FC } from 'react';
+import { useRef, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 
 const EmailVerify: FC = () => {
   const navigate = useNavigate();
+  const inputRefs = useRef<HTMLInputElement[]>([]); // ✅ Proper typing
+
+  const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
+    if (e.currentTarget.value) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
@@ -32,6 +40,10 @@ const EmailVerify: FC = () => {
                   key={index}
                   required
                   className="w-12 h-12 bg-[#333A5C]/80 text-white text-xl text-center rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none"
+                  ref={el => {
+                    if (el) inputRefs.current[index] = el;
+                  }}
+                  onInput={e => handleInput(e, index)}
                 />
               ))}
           </div>
