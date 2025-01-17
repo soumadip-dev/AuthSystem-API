@@ -19,6 +19,18 @@ const EmailVerify: FC = () => {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const paste = e.clipboardData.getData('text').trim();
+    const pasteArr = paste.split('');
+
+    pasteArr.forEach((char, i) => {
+      if (inputRefs.current[i]) {
+        inputRefs.current[i].value = char;
+      }
+    });
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
@@ -37,7 +49,7 @@ const EmailVerify: FC = () => {
         </div>
 
         <form className="space-y-6">
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between mb-4" onPaste={handlePaste}>
             {Array(6)
               .fill(0)
               .map((_, index) => (
