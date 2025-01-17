@@ -1,12 +1,13 @@
 import type { FC } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 
 const EmailVerify: FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
-        onClick={() => Navigate('/')}
+        onClick={() => navigate('/')}
         src={assets.logo}
         alt="logo"
         className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer hover:scale-105 transition-transform"
