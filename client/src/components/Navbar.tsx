@@ -2,7 +2,7 @@ import { useContext, type FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { AppContext } from '../context/AppContext';
-import { logoutUser } from '../api/auth.api';
+import { logoutUser, sendVerificationEmail } from '../api/authApi';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -30,6 +30,20 @@ const Navbar: FC = () => {
       toast.error('Logout failed. Please try again.');
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+  const sendVerificationOtp = async () => {
+    try {
+      const data = await sendVerificationEmail();
+      if (data.success) {
+        navigate('/email-verify');
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error('Failed to send verification OTP:', error);
+      toast.error('Failed to send verification OTP. Please try again.');
     }
   };
 
@@ -66,7 +80,7 @@ const Navbar: FC = () => {
               {!userData.isVerified && (
                 <li
                   className="py-1 px-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => navigate('/verify-email')}
+                  onClick={sendVerificationOtp}
                 >
                   Verify email
                 </li>
