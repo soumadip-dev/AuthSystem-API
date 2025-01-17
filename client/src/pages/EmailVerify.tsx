@@ -29,6 +29,11 @@ const EmailVerify: FC = () => {
         inputRefs.current[i].value = char;
       }
     });
+    // Focus last filled box
+    const lastIndex = Math.min(pasteArr.length, inputRefs.current.length) - 1;
+    if (lastIndex >= 0) {
+      inputRefs.current[lastIndex]?.focus();
+    }
   };
 
   return (
