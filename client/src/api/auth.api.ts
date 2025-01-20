@@ -52,3 +52,9 @@ export const logoutUser = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/logout');
   return response.data;
 };
+
+// send verification email
+export const sendVerificationEmail = async (): Promise<ApiResponse> => {
+  const response = await axiosInstance.post('/api/v1/users/send-verification-email');
+  return response.data;
+};
