@@ -5,6 +5,7 @@ import type {
   LoginCredentials,
   GetUserResponse,
 } from '../types/global';
+import axios from 'axios';
 
 // register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
@@ -35,8 +36,15 @@ export const getCurrentUser = async (): Promise<GetUserResponse> => {
 
 // checking if user is logged in
 export const isAuthenticated = async (): Promise<ApiResponse> => {
-  const response = await axiosInstance.get('/api/v1/users/is-auth');
-  return response.data;
+  try {
+    const response = await axiosInstance.get('/api/v1/users/is-auth');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return { success: false, message: 'Not authenticated' };
+    }
+    throw error; // Re-throw other errors
+  }
 };
 
 // logout user
