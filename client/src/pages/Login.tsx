@@ -24,15 +24,15 @@ const Login: FC = () => {
   const handleRegister = async (credentials: RegisterCredentials) => {
     try {
       setIsSubmitting(true);
-      const response = await registerUser(credentials);
+      await registerUser(credentials);
       setName('');
       setEmail('');
       setPassword('');
       await checkAuthAndFetchUser(); // Fetch user data after successful registration
       navigate('/');
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 'Registration failed. Please try again.';
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -42,14 +42,15 @@ const Login: FC = () => {
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
       setIsSubmitting(true);
-      const response = await loginUser(credentials);
+      await loginUser(credentials);
       await checkAuthAndFetchUser(); // Fetch user data after successful login
       navigate('/');
-    } catch (error: any) {
+    } catch (error: unknown) {
       setEmail('');
       setPassword('');
+      const err = error as { response?: { data?: { message?: string } } };
       const errorMessage =
-        error.response?.data?.message || 'Login failed. Please check your credentials.';
+        err.response?.data?.message || 'Login failed. Please check your credentials.';
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
