@@ -26,9 +26,15 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
       const authResponse = await isAuthenticated();
 
       if (authResponse.success) {
-        const userResponse = await getCurrentUser();
-        setUserData(userResponse.userData);
-        setIsLoggedIn(true);
+        try {
+          const userResponse = await getCurrentUser();
+          setUserData(userResponse.userData);
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          setIsLoggedIn(false);
+          setUserData(null);
+        }
       } else {
         setIsLoggedIn(false);
         setUserData(null);
