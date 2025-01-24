@@ -2,13 +2,7 @@ import { useState, type FC, useContext } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type {
-  PasswordChecks,
-  RegisterCredentials,
-  ApiResponse,
-  ApiError,
-  LoginCredentials,
-} from '../types/global';
+import type { PasswordChecks, RegisterCredentials, LoginCredentials } from '../types/global';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppContext } from '../context/AppContext';
@@ -36,7 +30,6 @@ const Login: FC = () => {
       setPassword('');
       await checkAuthAndFetchUser(); // Fetch user data after successful registration
       navigate('/');
-      toast.success('Registration successful');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Registration failed. Please try again.';
@@ -51,7 +44,6 @@ const Login: FC = () => {
       setIsSubmitting(true);
       const response = await loginUser(credentials);
       await checkAuthAndFetchUser(); // Fetch user data after successful login
-      toast.success('Login successful! Redirecting...');
       navigate('/');
     } catch (error: any) {
       setEmail('');
