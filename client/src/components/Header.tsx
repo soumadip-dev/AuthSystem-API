@@ -4,8 +4,12 @@ import { AppContext } from '../context/AppContext';
 
 const Header: FC = () => {
   const context = useContext(AppContext);
-  if (!context) throw new Error('Login must be used within an AppContextProvider');
-  const { userData, isLoggedIn } = context;
+  if (!context) throw new Error('Header must be used within an AppContextProvider');
+  const { userData, isLoggedIn, isLoading } = context;
+
+  if (isLoading) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center mt-20 px-4 text-center text-gray-800 animate-fadeIn">
