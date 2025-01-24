@@ -15,8 +15,7 @@ const Navbar: FC = () => {
     throw new Error('Navbar must be used within an AppContextProvider');
   }
 
-  const { userData, isLoggedIn, setIsLoggedIn, setUserData, checkAuthAndFetchUser, isLoading } =
-    context;
+  const { userData, isLoggedIn, setIsLoggedIn, setUserData, isLoading } = context;
 
   const handleLogout = async () => {
     try {
@@ -74,10 +73,9 @@ const Navbar: FC = () => {
               )}
               <li
                 className={`py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10 ${
-                  isLoggingOut ? 'opacity-50' : ''
+                  isLoggingOut ? 'opacity-50 pointer-events-none' : ''
                 }`}
-                onClick={handleLogout}
-                disabled={isLoggingOut}
+                onClick={isLoggingOut ? undefined : handleLogout}
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </li>
