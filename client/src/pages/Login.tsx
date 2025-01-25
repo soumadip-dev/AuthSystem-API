@@ -9,11 +9,10 @@ import type {
   ApiError,
   LoginCredentials,
 } from '../types/global';
-import { useMutation } from '@tanstack/react-query';
-import { registerUser, loginUser } from '../api/auth.api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppContext } from '../context/AppContext';
+import { registerUser, loginUser } from '../api/auth.api';
 
 const Login: FC = () => {
   const navigate = useNavigate();
@@ -22,55 +21,48 @@ const Login: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('soumadipmajila@gmail.com');
   const [password, setPassword] = useState('8Uh9M96cZq$');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const context = useContext(AppContext);
   if (!context) throw new Error('Login must be used within an AppContextProvider');
-  const { setIsLoggedIn, refetchCurrentUser } = context;
+  const { setIsLoggedIn, setUserData, checkAuthAndFetchUser } = context;
 
-  const { mutate: registerMutate, isPending: isRegistering } = useMutation<
-    ApiResponse,
-    ApiError,
-    RegisterCredentials
-  >({
-    mutationFn: registerUser,
-    onSuccess: () => {
+  const handleRegister = async (credentials: RegisterCredentials) => {
+    try {
+      setIsSubmitting(true);
+      const response = await registerUser(credentials);
       setName('');
       setEmail('');
       setPassword('');
-      setIsLoggedIn(true);
-      refetchCurrentUser();
+      await checkAuthAndFetchUser(); // Fetch user data after successful registration
       navigate('/');
       toast.success('Registration successful');
-    },
-    onError: (error: ApiError) => {
+    } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(errorMessage);
-    },
-  });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  const { mutate: loginMutate, isPending: isLoggingIn } = useMutation<
-    ApiResponse,
-    ApiError,
-    LoginCredentials
-  >({
-    mutationFn: loginUser,
-    onSuccess: () => {
-      setIsLoggedIn(true);
-      refetchCurrentUser();
+  const handleLogin = async (credentials: LoginCredentials) => {
+    try {
+      setIsSubmitting(true);
+      const response = await loginUser(credentials);
+      await checkAuthAndFetchUser(); // Fetch user data after successful login
       toast.success('Login successful! Redirecting...');
       navigate('/');
-    },
-    onError: (error: ApiError) => {
+    } catch (error: any) {
       setEmail('');
       setPassword('');
       const errorMessage =
         error.response?.data?.message || 'Login failed. Please check your credentials.';
       toast.error(errorMessage);
-    },
-  });
-
-  const isPending = isRegistering || isLoggingIn;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Form submission handler
   const handleSubmit = (e: React.FormEvent) => {
@@ -81,9 +73,9 @@ const Login: FC = () => {
         toast.warning('Please use a stronger password');
         return;
       }
-      registerMutate({ name, email, password });
+      handleRegister({ name, email, password });
     } else {
-      loginMutate({ email, password });
+      handleLogin({ email, password });
     }
   };
 
@@ -147,7 +139,7 @@ const Login: FC = () => {
                 className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-                disabled={isPending}
+                disabled={isSubmitting}
               />
             </div>
           )}
@@ -161,7 +153,7 @@ const Login: FC = () => {
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              disabled={isPending}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -174,18 +166,18 @@ const Login: FC = () => {
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              disabled={isPending}
+              disabled={isSubmitting}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               className={`text-indigo-300 hover:text-indigo-200 ${
-                isPending ? 'opacity-50 cursor-not-allowed' : ''
+                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              disabled={isPending}
+              disabled={isSubmitting}
             >
-              {isPending ? (
+              {isSubmitting ? (
                 <svg
                   className="animate-spin h-5 w-5 text-indigo-300"
                   xmlns="http://www.w3.org/2000/svg"
@@ -262,7 +254,7 @@ const Login: FC = () => {
                 type="button"
                 className="text-xs text-indigo-400 hover:text-indigo-300"
                 onClick={() => navigate('/reset-password')}
-                disabled={isPending}
+                disabled={isSubmitting}
               >
                 Forgot Password?
               </button>
@@ -271,12 +263,12 @@ const Login: FC = () => {
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isSubmitting}
             className={`w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all ${
-              isPending ? 'opacity-70 cursor-not-allowed' : ''
+              isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >
-            {isPending ? (
+            {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 <svg
                   className="animate-spin h-5 w-5 text-white"
@@ -316,9 +308,9 @@ const Login: FC = () => {
               {state === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
               <button
                 type="button"
-                onClick={() => !isPending && setState(state === 'signup' ? 'login' : 'signup')}
+                onClick={() => !isSubmitting && setState(state === 'signup' ? 'login' : 'signup')}
                 className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2"
-                disabled={isPending}
+                disabled={isSubmitting}
               >
                 {state === 'signup' ? 'Login' : 'Sign Up'}
               </button>
