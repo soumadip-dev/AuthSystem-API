@@ -6,7 +6,7 @@ import type {
   GetUserResponse,
 } from '../types/global';
 
-// Mutation for register user
+// register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/register', {
     name: credentials.name,
@@ -17,7 +17,7 @@ export const registerUser = async (credentials: RegisterCredentials): Promise<Ap
   return response.data;
 };
 
-// Mutation for login user
+// login user
 export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/login', {
     email: credentials.email,
@@ -27,19 +27,19 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
   return response.data;
 };
 
-// Query for getting current user
+// getting current user
 export const getCurrentUser = async (): Promise<GetUserResponse> => {
   const response = await axiosInstance.get('/api/v1/users/user-details');
   return response.data;
 };
 
-// Query for checking if user is logged in
+// checking if user is logged in
 export const isAuthenticated = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.get('/api/v1/users/is-auth');
   return response.data;
 };
 
-// Muation for logout user
+// logout user
 export const logoutUser = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/logout');
   return response.data;
