@@ -38,3 +38,9 @@ export const isAuthenticated = async (): Promise<ApiResponse> => {
   const response = await axiosInstance.get('/api/v1/users/is-auth');
   return response.data;
 };
+
+// Muation for logout user
+export const logoutUser = async (): Promise<ApiResponse> => {
+  const response = await axiosInstance.post('/api/v1/users/logout');
+  return response.data;
+};
