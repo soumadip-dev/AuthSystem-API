@@ -15,7 +15,7 @@ const Header: FC = () => {
         className="w-36 h-36 rounded-full mb-6 border-4 border-white/50 shadow-lg hover:scale-105 transition-transform duration-300"
       />
       <h1 className="flex items-center gap-2 text-xl sm:text-3xl font-medium mb-2">
-        Hello, {isLoggedIn ? userData?.name : 'Developer'}
+        Hello, {isLoggedIn && userData ? userData.name : 'Developer'}
         <img src={assets.hand_wave} alt="hand wave" className="w-8 aspect-square animate-wiggle" />
       </h1>
       <h2 className="text-3xl sm:text-5xl font-semibold mb-4 bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
