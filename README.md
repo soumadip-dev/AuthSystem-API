@@ -33,7 +33,7 @@
 
 - **Frontend**: React,Tailwind CSS, Tanstack Query, React Router
 - **Backend**: Node.js with Express – RESTful API structure
-- **Database**: MongoDB
+- **Database**: MongoDB with Mongoose – flexible document-based storage
 - **Email Service**: Nodemailer
 - **SMTP Server**: Brevo
 
