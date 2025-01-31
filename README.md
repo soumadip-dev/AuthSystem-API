@@ -6,7 +6,7 @@
 
 <div align="center">
   <a href="https://github.com/soumadip-dev">
-    <img src="https://skillicons.dev/icons?i=react,nodejs,express,mongodb,github" alt="Tech Stack" width="190" style="padding: 15px 0;">
+    <img src="https://skillicons.dev/icons?i=react,tailwindcss,nodejs,express,mongodb,github" alt="Tech Stack" width="190" style="padding: 15px 0;">
   </a>
 </div>
 
