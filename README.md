@@ -23,12 +23,9 @@
 - **Secure Login**: Authenticate users via email/password using JWT (JSON Web Tokens).
 - **Forgot Password**: Request a password reset link via email.
 - **Reset Password**: Securely reset passwords using a time-limited token.
-- **Profile Management**: Fetch user details (excluding sensitive data like passwords).
 - **Logout**: Invalidate JWT tokens to log users out securely.
 - **Password Hashing**: bcrypt-based hashing for secure password storage.
-- **Error Handling**: Comprehensive error responses for all endpoints.
 - **Email Notifications**: Nodemailer-powered emails for verification and password resets.
-- **Environment Variables**: Secure configuration using `.env` for sensitive data (JWT secret, email credentials, etc.).
 
 ---
 
@@ -36,12 +33,8 @@
 
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
-- **ORM**: Mongoose
-- **Authentication**: JWT
-- **Password Hashing**: bcryptjs
 - **Email Service**: Nodemailer
-- **Environment Management**: dotenv
-- **Version Control**: Git, GitHub
+- **SMTP Server**: Brevo
 
 ---
 
