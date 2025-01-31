@@ -32,7 +32,7 @@
 ## 🛠️ Tech Stack
 
 - **Frontend**: React,Tailwind CSS, Tanstack Query, React Router
-- **Backend**: Node.js, Express
+- **Backend**: Node.js with Express – RESTful API structure
 - **Database**: MongoDB
 - **Email Service**: Nodemailer
 - **SMTP Server**: Brevo
