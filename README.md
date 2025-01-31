@@ -16,7 +16,7 @@
 
 ---
 
-## 🚀 Features
+## 🌟 Features
 
 - **User Registration**: Register new users with name, email, and password.
 - **Email Verification**: Send verification emails for account activation.
