@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  User Authentication API
+  User Authentication System (MERN)
   <br>
 </h1>
 
@@ -13,7 +13,6 @@
 <h3 align="center">
   A secure MERN authentication system with user registration, email verification, login, logout, password reset, and profile management.
 </h3>
-
 
 ---
 
