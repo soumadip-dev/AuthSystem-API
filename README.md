@@ -11,8 +11,9 @@
 </div>
 
 <h3 align="center">
-  A robust and secure user authentication system built with Node.js, Express, and MongoDB. Features include user registration, email verification, login, logout, password reset, and profile management.
+  A secure MERN authentication system with user registration, email verification, login, logout, password reset, and profile management.
 </h3>
+
 
 ---
 
