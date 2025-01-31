@@ -31,6 +31,7 @@
 
 ## 🛠️ Tech Stack
 
+- **Frontend**: React, Redux, Tailwind CSS, Tanstack Router, Tanstack Query
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
 - **Email Service**: Nodemailer
