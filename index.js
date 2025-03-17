@@ -1,6 +1,10 @@
 import cors from 'cors'; // Importing CORS (Cross-Origin Resource Sharing) middleware
 import dotenv from 'dotenv'; // Importing dotenv to load environment variables from a .env file
 import express from 'express'; // Importing the Express framework
+import db from './utils/db.js';
+
+// import all routes
+import userRoutes from './routes/user.routes.js';
 
 dotenv.config(); // Loading environment variables
 
@@ -8,7 +12,7 @@ const app = express(); // Creating an instance of an Express application
 
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Allowing requests only from the specified frontend origin
+    origin: process.env.BASE_URL, // Allowing requests only from the specified frontend origin
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], // Specifying the allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Defining the allowed request headers
   })
@@ -31,6 +35,12 @@ app.get('/about', (req, res) => {
   // Handling a GET request to the '/about' URL
   res.send('About'); // Responding with 'About' when this route is accessed
 });
+
+// Connect to Database
+db();
+
+// 
+app.use('/api/v1/users', userRoutes);
 
 app.listen(port, () => {
   // Starting the server and making it listen on the defined port
