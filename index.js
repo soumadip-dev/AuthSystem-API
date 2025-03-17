@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors'; // Importing CORS (Cross-Origin Resource Sharing) middleware
 import dotenv from 'dotenv'; // Importing dotenv to load environment variables from a .env file
 import express from 'express'; // Importing the Express framework
@@ -26,6 +27,10 @@ app.use(express.json());
 // Middleware to parse incoming form data (extended: true allows nested objects)
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware to parse cookies
+// (Now we can use cookies)
+app.use(cookieParser());
+
 app.get('/', (req, res) => {
   // Handling a GET request to the root URL ('/')
   res.send('Hello World!'); // Responding with 'Hello World!' when this route is accessed
@@ -39,7 +44,7 @@ app.get('/about', (req, res) => {
 // Connect to Database
 db();
 
-// 
+//
 app.use('/api/v1/users', userRoutes);
 
 app.listen(port, () => {

@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'; // Importing the Bcrypt library for password hashing
 import mongoose from 'mongoose'; // Importing the Mongoose library
 // Creating a new schema for the User model
 const userSchema = new mongoose.Schema(
@@ -28,6 +29,14 @@ const userSchema = new mongoose.Schema(
     timestamps: true, // Adding timestamps to the schema this will add createdAt and UpdatedAt
   }
 );
+
+// Hook to hash password before saving user to database
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema); // Defining a Mongoose model named 'User' using the schema
 
