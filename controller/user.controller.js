@@ -101,32 +101,39 @@ const registerUser = async (req, res) => {
 // Controller for user verification
 const verifyUser = async (req, res) => {
   try {
-    // 1. Get verification token from URL query parameter
-    const token = req.params;
+    // 1. Get verification token from URL parameters
+    const { token } = req.params;
     console.log(token);
-    // 2. validate if token
+
+    // 2. Validate if token exists
     if (!token) {
       return res.status(400).json({
         message: 'Invalid token',
       });
     }
-    // 3. find user based on token
+
+    // 3. Find user based on token
     const user = await User.findOne({ verificationToken: token });
-    // 4. if not found, return error
+
+    // 4. If user not found, return error
     if (!user) {
       return res.status(404).json({
-        message: 'User not found',
+        message: 'User not found or already verified',
       });
     }
-    // 5. if found, update user's isVerified status to true
+
+    // 5. Update user's isVerified status to true
     user.isVerified = true;
-    // 6. remove verification token from database
-    user.verificationToken = '';
-    // 7. save changes to database
+
+    // 6. Remove verification token from database
+    user.verificationToken = null;
+
+    // 7. Save changes to database
     await user.save();
-    // 8. send success response to user
-    res.status(201).json({
-      message: 'verfication successfull',
+
+    // 8. Send success response to user
+    res.status(200).json({
+      message: 'Verification successful. You can now log in.',
     });
   } catch (err) {
     console.error(err);
@@ -181,11 +188,12 @@ const login = async (req, res) => {
     );
 
     // 9. store JWT token in cookie
-    res.cookie('test', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
+    };
+    res.cookie('token', token, cookieOptions);
 
     // 10. send success response to user
     res.status(200).json({
@@ -206,4 +214,50 @@ const login = async (req, res) => {
   }
 };
 
-export { login, registerUser, verifyUser };
+// Controller for profile
+const getMe = async (req, res) => {
+  try {
+    // Get user ID from middleware
+    const userId = req.user.id;
+
+    // Find user without password
+    const user = await User.findById(userId).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+        success: false,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error('GetMe error:', error);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+    });
+  }
+};
+
+// Controller for logout user
+const logout = async (req, res) => {
+  try {
+    // clear the cookies
+    res.cookie('token', '', {});
+    res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+export { getMe, login, logout, registerUser, verifyUser };
