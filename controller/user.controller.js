@@ -378,8 +378,8 @@ const resetPassword = async (req, res) => {
       // set password in user
       user.password = password;
       // resetToken,resetExpiry reset them
-      user.resetPasswordToken = null;
-      user.resetPasswordExpires = null;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
       // save changes
       await user.save();
 
