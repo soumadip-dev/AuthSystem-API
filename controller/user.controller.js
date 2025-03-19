@@ -260,4 +260,156 @@ const logout = async (req, res) => {
     });
   }
 };
-export { getMe, login, logout, registerUser, verifyUser };
+
+// Controller for forgot password
+const forgotPassword = async (req, res) => {
+  try {
+    // 1. Get email from req.body
+    const { email } = req.body;
+    // 2. validate email
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required',
+      });
+    }
+    // 2. find user based on email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+    // 3. set reset token and reset ecpiry(Date.now()+10*60*1000)
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    console.log(resetToken);
+    user.resetPasswordToken = resetToken; // set reset token
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10minutes
+
+    // 4. save user with reset token
+    await user.save();
+
+    // 5. Send email
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILTRAP_HOST,
+      port: process.env.MAILTRAP_PORT,
+      secure: false, // true for port 465, false for other ports
+      auth: {
+        user: process.env.MAILTRAP_USERNAME,
+        pass: process.env.MAILTRAP_PASSWORD,
+      },
+    });
+
+    // create email content
+    const mailOption = {
+      from: process.env.MAILTRAP_SENDEREMAIL || 'no-reply@example.com',
+      to: user.email,
+      subject: 'Reset Your Password', // Subject line
+      text: `Hello ${user.name},\n\nWe received a request to reset your password. Please use the link below to set a new password:\n\n${process.env.BASE_URL}/api/v1/users/reset-password/${resetToken}\n\nThis link is valid for 10 minutes.\n\nIf you did not request this, please ignore this email or contact support if you have concerns.\n\nThank you!`,
+      html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
+      <h2 style="color: #333;">Hello <strong>${user.name}</strong>,</h2>
+      <p style="font-size: 16px; color: #555;">We received a request to reset your password.</p>
+      <p style="font-size: 16px; color: #555;">Click the button below to reset your password:</p>
+      <p style="text-align: center;">
+        <a href="${process.env.BASE_URL}/api/v1/users/reset-password/${resetToken}" 
+          style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
+          Reset Password
+        </a>
+      </p>
+      <p style="font-size: 14px; color: #777;">This link will expire in 10 minutes.</p>
+      <p style="font-size: 14px; color: #777;">If you did not request this, you can ignore this email.</p>
+      <p style="font-size: 14px; color: #777;">Thank you!</p>
+    </div>
+  `,
+    };
+
+    // send verification email
+    await transporter.sendMail(mailOption, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Error sending email',
+        });
+      } else {
+        console.log('Email sent:', info.response);
+        res.status(200).json({
+          success: true,
+          message: 'Password reset email sent successfully',
+        });
+      }
+    });
+  } catch (err) {
+    console.error('Error sending password reset email:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+// Controller for reset password
+const resetPassword = async (req, res) => {
+  try {
+    // 1. get reset token from params
+    const { resetToken } = req.params;
+    // 2. password from re.body
+    const { password } = req.body;
+
+    // 2. validate reset token
+    if (!resetToken || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Token and new password is required',
+      });
+    }
+    try {
+      const user = await User.findOne({
+        resetPasswordToken: resetToken,
+        resetPasswordExpires: { $gt: Date.now() }, // Ensure token is not expired
+      });
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired reset token',
+        });
+      }
+      // set password in user
+      user.password = password;
+      // resetToken,resetExpiry reset them
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+      // save changes
+      await user.save();
+
+      // Sen success message
+      res.status(200).json({
+        success: true,
+        message: 'Password reset successfully',
+      });
+    } catch (err) {
+      console.error('Error resetting password:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+      });
+    }
+  } catch (err) {
+    console.error('Error resetting password:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+export {
+  forgotPassword,
+  getMe,
+  login,
+  logout,
+  registerUser,
+  resetPassword,
+  verifyUser,
+};
