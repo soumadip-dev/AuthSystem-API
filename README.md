@@ -36,6 +36,7 @@
 
 - **Backend**: Node.js, Express
 - **Database**: MongoDB
+- **ORM**: Mongoose
 - **Authentication**: JWT (JSON Web Tokens)
 - **Password Hashing**: bcryptjs
 - **Email Service**: Nodemailer
