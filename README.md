@@ -48,8 +48,8 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/soumadip-dev/Auth-System.git
-   cd Auth-System
+   git clone https://github.com/soumadip-dev/Auth-Api-Mongo.git
+   cd Auth-Api-Mongo
    ```
 
 2. Install dependencies:
