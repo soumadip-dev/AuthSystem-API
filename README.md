@@ -48,32 +48,28 @@
 ## 🛠️ Installation & Setup
 
 1. **Clone the repository**:
-
    ```bash
    git clone https://github.com/soumadip-dev/Auth-Api-Mongo.git
    cd Auth-Api-Mongo
    ```
 
 2. **Install dependencies**:
-
    ```bash
    npm install
    ```
 
 3. **Configure environment variables**:
-
    - Create a `.env` file in the root directory.
    - Add the following variables (replace placeholders with your actual values):
-
      ```env
      ########## SERVER CONFIGURATION ##########
-     PORT=3000
+     PORT=8000
 
      ########## DATABASE CONFIGURATION ##########
      MONGO_URL=your_mongodb_connection_string
 
      ########## BASE URL ##########
-     BASE_URL=
+     BASE_URL=http://localhost:8000
 
      ########## MAILTRAP CONFIGURATION ##########
      MAILTRAP_HOST=sandbox.smtp.mailtrap.io
