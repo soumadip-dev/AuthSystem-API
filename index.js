@@ -1,53 +1,40 @@
+////////// IMPORTING
 import cookieParser from 'cookie-parser';
-import cors from 'cors'; // Importing CORS (Cross-Origin Resource Sharing) middleware
-import dotenv from 'dotenv'; // Importing dotenv to load environment variables from a .env file
-import express from 'express'; // Importing the Express framework
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import userRoutes from './routes/user.routes.js';
 import db from './utils/db.js';
 
-// import all routes
-import userRoutes from './routes/user.routes.js';
+dotenv.config(); // Load environment variables from the .env file
 
-dotenv.config(); // Loading environment variables
+////////// INITIALIZING EXPRESS APPLICATION
+const app = express();
 
-const app = express(); // Creating an instance of an Express application
-
+////////// CONFIGURING CORS (CROSS-ORIGIN RESOURCE SHARING)
 app.use(
   cors({
-    origin: process.env.BASE_URL, // Allowing requests only from the specified frontend origin
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], // Specifying the allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Defining the allowed request headers
+    origin: process.env.BASE_URL, // Allowed origin from environment variables
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed request headers
   })
 );
 
-const port = process.env.PORT || 3000; // Defining the port number (from .env if available, otherwise default to 3000)
+////////// CONFIGURING MIDDLEWARES
+app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies'
+app.use(cookieParser()); // Parse cookies from incoming requests
 
-// Middleware to parse incoming JSON requests
-app.use(express.json());
+////////// SETTING SERVER PORT
+const port = process.env.PORT || 8000;
 
-// Middleware to parse incoming form data (extended: true allows nested objects)
-app.use(express.urlencoded({ extended: true }));
-
-// Middleware to parse cookies
-// (Now we can use cookies)
-app.use(cookieParser());
-
-app.get('/', (req, res) => {
-  // Handling a GET request to the root URL ('/')
-  res.send('Hello World!'); // Responding with 'Hello World!' when this route is accessed
-});
-
-app.get('/about', (req, res) => {
-  // Handling a GET request to the '/about' URL
-  res.send('About'); // Responding with 'About' when this route is accessed
-});
-
-// Connect to Database
+////////// CONNECTING TO DATABASE
 db();
 
-//
+////////// DEFINING ROUTES
 app.use('/api/v1/users', userRoutes);
 
+////////// STARTING THE SERVER
 app.listen(port, () => {
-  // Starting the server and making it listen on the defined port
-  console.log(`Server is running on port ${port}`); // Logging a message when the server starts successfully
+  console.log(`🔥 Server is running on port ${port}`);
 });

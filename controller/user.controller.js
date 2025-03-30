@@ -1,412 +1,417 @@
+////////// IMPORTING
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import User from '../model/user.model.js';
+import { generateMailOptions } from '../utils/email.templates.js';
 
-// Controller of register user
-const registerUser = async (req, res) => {
-  // 1. Get data from request body
+dotenv.config();
+
+////////// CONTROLLER FOR REGISTERUSER
+const registerUser = async function (req, res) {
+  // 1. Get data from body
   const { name, email, password } = req.body;
 
-  // 2. Validate input fields
+  // 2. Validate
   if (!name || !email || !password) {
-    return res.status(400).json({
-      message: 'Please fill in all fields',
+    return res.status(400).json({ 
+      status: 'error',
+      message: 'All fields are required.' 
     });
   }
 
+  const comprehensiveEmailRegex =
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!comprehensiveEmailRegex.test(email)) {
+    return res.status(400).json({ 
+      status: 'error',
+      message: 'Invalid email format.' 
+    });
+  }
+
+  // Password validation
+  const upperCaseRegex = /[A-Z]/;
+  const numberRegex = /[0-9]/;
+  const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+  if (
+    password.length < 6 ||
+    !upperCaseRegex.test(password) ||
+    !numberRegex.test(password) ||
+    !specialCharRegex.test(password)
+  ) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Password must be at least 6 characters long, contain an uppercase letter, a number, and a special character.'
+    });
+  }
+
+  console.log(`📧 Email received for registration: ${email}`);
+
   try {
-    // 3. Check if user already exists in the database
+    // 3. Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({
-        message: 'User already exists',
+      console.log('⚠️ User already exists:', email);
+      return res.status(400).json({ 
+        status: 'error',
+        message: 'User already exists.' 
       });
     }
 
-    // 4. Create a new user in the database
-    const user = await User.create({
-      name,
-      email,
-      password,
-    });
+    // 4. Create user
+    const newUser = await User.create({ name, email, password });
+    console.log('✅ User created successfully:', newUser);
 
-    if (!user) {
-      return res.status(500).json({
-        message: 'User not created',
+    if (!newUser) {
+      return res.status(400).json({ 
+        status: 'error',
+        message: 'Failed to create user.' 
       });
     }
 
-    // 5. Generate a verification token
+    // 5. Create verification token
     const token = crypto.randomBytes(32).toString('hex');
-    console.log(token);
+    console.log('🔑 Verification token generated:', token);
 
-    // Assign token to user object
-    user.verificationToken = token;
+    // 6. Save token
+    newUser.verificationToken = token;
+    await newUser.save();
 
-    // 6. Save the user with the verification token in the database
-    await user.save();
-
-    // 7. Configure email transporter
+    // 7. Send verification email
     const transporter = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
       port: process.env.MAILTRAP_PORT,
-      secure: false, // true for port 465, false for other ports
+      secure: false,
       auth: {
         user: process.env.MAILTRAP_USERNAME,
         pass: process.env.MAILTRAP_PASSWORD,
       },
     });
 
-    // Email details
-    const mailOptions = {
-      from: process.env.MAILTRAP_SENDEREMAIL, // Sender email
-      to: user.email, // Recipient email
-      subject: 'Verify Your Email Address', // Subject
-      text: `Hello ${user.name},\n\nPlease verify your email using the following link:\n\n${process.env.BASE_URL}/api/v1/users/verify/${token}\n\nThank you!`, // Plain text body
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
-          <h2 style="color: #333;">Hello <strong>${user.name}</strong>,</h2>
-          <p style="font-size: 16px; color: #555;">Please verify your email by clicking the button below:</p>
-          <p style="text-align: center;">
-            <a href="${process.env.BASE_URL}/api/v1/users/verify/${token}" 
-              style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
-              Verify Email
-            </a>
-          </p>
-          <p style="font-size: 14px; color: #777;">If you didn’t request this, you can ignore this email.</p>
-          <p style="font-size: 14px; color: #777;">Thank you!</p>
-        </div>
-      `, // HTML email body
-    };
-
-    // Send verification email
+    const mailOptions = generateMailOptions(newUser, token, 'verify');
     await transporter.sendMail(mailOptions);
+    console.log(`📩 Verification email sent to: ${newUser.email}`);
 
-    // 8. Send success response to user
-    res.status(201).json({
+    // 8. Return success
+    res.status(200).json({
+      status: 'success',
       message: 'User registered successfully.',
       success: true,
     });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: 'Internal Server Error',
-      error: err.message,
+  } catch (error) {
+    console.error('❌ Error during user registration:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while registering the user. Please try again later.',
+      success: false,
     });
   }
 };
 
-// Controller for user verification
-const verifyUser = async (req, res) => {
+////////// CONTROLLER FOR VERIFYUSER
+const verifyUser = async function (req, res) {
   try {
-    // 1. Get verification token from URL parameters
+    // 1. Extract token
     const { token } = req.params;
-    console.log(token);
+    console.log(`🔍 Received verification token: ${token}`);
 
-    // 2. Validate if token exists
+    // 2. Validate token
     if (!token) {
       return res.status(400).json({
-        message: 'Invalid token',
+        status: 'error',
+        message: 'Verification token is required.',
+        success: false,
       });
     }
 
-    // 3. Find user based on token
+    // 3. Find user
     const user = await User.findOne({ verificationToken: token });
-
-    // 4. If user not found, return error
     if (!user) {
-      return res.status(404).json({
-        message: 'User not found or already verified',
+      console.log('⚠️ Invalid verification token');
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid verification token.',
+        success: false,
       });
     }
 
-    // 5. Update user's isVerified status to true
+    // 4. Update user
     user.isVerified = true;
-
-    // 6. Remove verification token from database
-    user.verificationToken = null;
-
-    // 7. Save changes to database
+    user.verificationToken = undefined;
     await user.save();
 
-    // 8. Send success response to user
+    console.log(`✅ User verified successfully: ${user.email}`);
+
+    // 5. Respond
     res.status(200).json({
-      message: 'Verification successful. You can now log in.',
+      status: 'success',
+      message: 'User verified successfully.',
+      success: true,
     });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: 'Internal Server Error',
+  } catch (error) {
+    console.error('❌ Error during verification:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while verifying the user. Please try again later.',
+      success: false,
     });
   }
 };
 
-// Controller fro login
-const login = async (req, res) => {
+////////// CONTROLLER FOR LOGIN
+const login = async function (req, res) {
+  // 1. Get data
+  const { email, password } = req.body;
+
+  // 2. Validate
+  if (!email || !password) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Email and password are required.',
+      success: false,
+    });
+  }
+
   try {
-    // 1. get user credentials from request body
-    const { email, password } = req.body;
-    // 2. validate if email and password exist
-    if (!email || !password) {
-      return res.status(400).json({
-        message: 'Email and password are required',
-      });
-    }
-    // 3. find user based on email
+    // 3. Find user
     const user = await User.findOne({ email });
-    // 4. if not found, return error
     if (!user) {
-      return res.status(404).json({
-        message: 'User not found',
+      console.log('⚠️ Invalid email or password attempt:', email);
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid email or password.',
+        success: false,
       });
     }
-    // 5. compare password with hashed password in database
+
+    // 4. Validate password
     const isValidPassword = await bcrypt.compare(password, user.password);
-    // 6. if password is invalid, return error
     if (!isValidPassword) {
-      return res.status(401).json({
-        message: 'Invalid password',
+      console.log('🚫 Wrong password for:', email);
+      return res.status(400).json({
+        status: 'error',
+        message: 'Wrong password.',
+        success: false,
       });
     }
-    // 7. check if user is verified or not
+
+    // 5. Check verification
     if (!user.isVerified) {
-      return res.status(401).json({
-        message: 'User is not verified',
+      console.log('🔒 User is not verified:', email);
+      return res.status(400).json({
+        status: 'error',
+        message: 'User is not verified.',
+        success: false,
       });
     }
-    // 8. generate JWT token
+
+    // 6. Generate JWT
     const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      'shhhhh',
-      {
-        expiresIn: '24h',
-      }
+      { id: user._id },
+      process.env.JWT_SECRET_KEY || 'fallbackSecretKey',
+      { expiresIn: '24h' }
     );
 
-    // 9. store JWT token in cookie
-    const cookieOptions = {
+    console.log(`✅ Login successful for: ${email}`);
+
+    // 7. Set cookie
+    res.cookie('jwtToken', token, {
       httpOnly: true,
       secure: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    };
-    res.cookie('token', token, cookieOptions);
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
-    // 10. send success response to user
-    res.status(200).json({
-      message: 'Login successful',
+    // 8. Respond
+    return res.status(200).json({
+      status: 'success',
+      message: 'Login successful.',
       success: true,
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user: { name: user.name, email: user.email },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error('❌ Internal server error:', error);
+    return res.status(500).json({
+      status: 'error',
       message: 'Internal Server Error',
+      success: false,
     });
   }
 };
 
-// Controller for profile
-const getMe = async (req, res) => {
+////////// CONTROLLER FOR PROFILE
+const getProfile = async function (req, res) {
   try {
-    // Get user ID from middleware
-    const userId = req.user.id;
-
-    // Find user without password
-    const user = await User.findById(userId).select('-password');
+    // 1. Get user
+    const user = await User.findById(req.user.id).select('-password');
 
     if (!user) {
       return res.status(404).json({
+        status: 'error',
         message: 'User not found',
         success: false,
       });
     }
-
-    res.status(200).json({
-      success: true,
+    // 2. Respond
+    return res.status(200).json({
+      status: 'success',
       user,
-    });
-  } catch (error) {
-    console.error('GetMe error:', error);
-    res.status(500).json({
-      message: 'Internal Server Error',
-      success: false,
-    });
-  }
-};
-
-// Controller for logout user
-const logout = async (req, res) => {
-  try {
-    // clear the cookies
-    res.cookie('token', '', {});
-    res.status(200).json({
       success: true,
-      message: 'Logged out successfully',
     });
   } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({
-      success: false,
+    console.error('❌ Internal server error:', error);
+    return res.status(500).json({
+      status: 'error',
       message: 'Internal Server Error',
+      success: false,
     });
   }
 };
 
-// Controller for forgot password
-const forgotPassword = async (req, res) => {
+////////// CONTROLLER FOR LOGOUT
+const logout = async function (req, res) {
   try {
-    // 1. Get email from req.body
+    // 1. Clear cookie
+    res.cookie('jwtToken', '');
+    // 2. Respond
+    return res.status(200).json({
+      status: 'success',
+      message: 'Logged out successfully',
+      success: true,
+    });
+  } catch (error) {
+    console.error('❌ Internal server error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+      success: false,
+    });
+  }
+};
+
+////////// CONTROLLER FOR FORGOTPASSWORD
+const forgotPassword = async function (req, res) {
+  try {
+    // 1. Get email
     const { email } = req.body;
-    // 2. validate email
+
+    // 2. Validate
     if (!email) {
       return res.status(400).json({
-        success: false,
+        status: 'error',
         message: 'Email is required',
+        success: false,
       });
     }
-    // 2. find user based on email
+
+    // 3. Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        success: false,
+        status: 'error',
         message: 'User not found',
+        success: false,
       });
     }
-    // 3. set reset token and reset ecpiry(Date.now()+10*60*1000)
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    console.log(resetToken);
-    user.resetPasswordToken = resetToken; // set reset token
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10minutes
 
-    // 4. save user with reset token
+    // 4. Generate token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // 5. Update user
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // 5. Send email
+    // 6. Send email
     const transporter = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
       port: process.env.MAILTRAP_PORT,
-      secure: false, // true for port 465, false for other ports
+      secure: false,
       auth: {
         user: process.env.MAILTRAP_USERNAME,
         pass: process.env.MAILTRAP_PASSWORD,
       },
     });
 
-    // create email content
-    const mailOption = {
-      from: process.env.MAILTRAP_SENDEREMAIL || 'no-reply@example.com',
-      to: user.email,
-      subject: 'Reset Your Password', // Subject line
-      text: `Hello ${user.name},\n\nWe received a request to reset your password. Please use the link below to set a new password:\n\n${process.env.BASE_URL}/api/v1/users/reset-password/${resetToken}\n\nThis link is valid for 10 minutes.\n\nIf you did not request this, please ignore this email or contact support if you have concerns.\n\nThank you!`,
-      html: `
-    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: auto;">
-      <h2 style="color: #333;">Hello <strong>${user.name}</strong>,</h2>
-      <p style="font-size: 16px; color: #555;">We received a request to reset your password.</p>
-      <p style="font-size: 16px; color: #555;">Click the button below to reset your password:</p>
-      <p style="text-align: center;">
-        <a href="${process.env.BASE_URL}/api/v1/users/reset-password/${resetToken}" 
-          style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
-          Reset Password
-        </a>
-      </p>
-      <p style="font-size: 14px; color: #777;">This link will expire in 10 minutes.</p>
-      <p style="font-size: 14px; color: #777;">If you did not request this, you can ignore this email.</p>
-      <p style="font-size: 14px; color: #777;">Thank you!</p>
-    </div>
-  `,
-    };
+    const mailOption = generateMailOptions(user, resetToken, 'reset');
+    await transporter.sendMail(mailOption);
 
-    // send verification email
-    await transporter.sendMail(mailOption, (error, info) => {
-      if (error) {
-        console.error('Error sending email:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Error sending email',
-        });
-      } else {
-        console.log('Email sent:', info.response);
-        res.status(200).json({
-          success: true,
-          message: 'Password reset email sent successfully',
-        });
-      }
+    console.log(`📩 Password reset email sent to: ${user.email}`);
+    res.status(200).json({
+      status: 'success',
+      success: true,
+      message: 'Password reset email sent successfully',
     });
-  } catch (err) {
-    console.error('Error sending password reset email:', err);
-    return res.status(500).json({
+  } catch (error) {
+    console.error('❌ Error sending password reset email:', error);
+    res.status(500).json({
+      status: 'error',
       success: false,
-      message: 'Internal Server Error',
+      message: 'Error sending password reset email',
     });
   }
 };
-// Controller for reset password
-const resetPassword = async (req, res) => {
+
+////////// CONTROLLER FOR RESET PASSWORD
+const resetPassword = async function (req, res) {
   try {
-    // 1. get reset token from params
+    // 1. Get token and password
     const { resetToken } = req.params;
-    // 2. password from re.body
     const { password } = req.body;
 
-    // 2. validate reset token
+    // 2. Validate
     if (!resetToken || !password) {
       return res.status(400).json({
+        status: 'error',
         success: false,
-        message: 'Token and new password is required',
+        message: 'Please provide both reset token and new password',
       });
     }
-    try {
-      const user = await User.findOne({
-        resetPasswordToken: resetToken,
-        resetPasswordExpires: { $gt: Date.now() }, // Ensure token is not expired
-      });
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid or expired reset token',
-        });
-      }
-      // set password in user
-      user.password = password;
-      // resetToken,resetExpiry reset them
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      // save changes
-      await user.save();
 
-      // Sen success message
-      res.status(200).json({
-        success: true,
-        message: 'Password reset successfully',
-      });
-    } catch (err) {
-      console.error('Error resetting password:', err);
-      res.status(500).json({
+    // 3. Find user
+    const user = await User.findOne({
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      console.log('❌ User not found with reset token');
+      return res.status(400).json({
+        status: 'error',
         success: false,
-        message: 'Internal Server Error',
+        message: 'Invalid reset token',
       });
     }
-  } catch (err) {
-    console.error('Error resetting password:', err);
-    res.status(500).json({
+
+    // 4. Update user
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    // 5. Respond
+    res.status(200).json({
+      status: 'success',
+      success: true,
+      message: 'Password reset successfully',
+    });
+  } catch (error) {
+    console.error('❌ Error resetting password:', error);
+    return res.status(500).json({
+      status: 'error',
       success: false,
-      message: 'Internal Server Error',
+      message: 'Error resetting password',
     });
   }
 };
 
 export {
   forgotPassword,
-  getMe,
+  getProfile,
   login,
   logout,
   registerUser,

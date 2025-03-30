@@ -1,44 +1,35 @@
+////////// IMPORTING MODULES
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-export const isLoggedIn = async (req, res, next) => {
+
+dotenv.config();
+
+////////// AUTHENTICATION MIDDLEWARE
+export const isLoggedIn = async function (req, res, next) {
   try {
-    // Get token from cookie
-    let token = req.cookies?.token;
+    // 1. Retrieve the token from cookies
+    console.log('🍪 Cookies received:', req.cookies);
+    const token = req.cookies?.jwtToken;
+    console.log('🔍 Token detected:', token ? '✅ YES' : '❌ NO');
 
     if (!token) {
-      return res.status(401).json({
-        message: 'Authentication failed',
-        success: false,
-      });
+      return res
+        .status(401)
+        .json({ message: 'Access denied. No token provided.', success: false });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, 'shhhhh');
-    console.log('Decoded data: ', decoded); 
+    // 2. Decode and verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log('🔑 Decoded token:', decoded);
 
-    // Attach user to request
+    // 3. Attach the user to the request object
     req.user = decoded;
+
     next();
-  } catch (err) {
-    console.error('Auth middleware failure:', err);
-
-    // Handle JWT specific errors
-    if (err.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        message: 'Invalid token',
-        success: false,
-      });
-    }
-    if (err.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        message: 'Token expired',
-        success: false,
-      });
-    }
-
-    return res.status(500).json({
-      message: 'Internal server error',
-      success: false,
-    });
+  } catch (error) {
+    console.error('⚠️ Token verification failed in middleware:', error.message);
+    return res
+      .status(401)
+      .json({ message: 'Invalid or expired token.', success: false });
   }
-  // Remove extra next() here
 };
