@@ -1,16 +1,20 @@
-# <h1 align="center">User Authentication System (MERN)</h1>
+<h1 align="center">
+  <br>
+  User Authentication System (MERN)
+  <br>
+</h1>
 
 <div align="center">
-  <a href="https://github.com/soumadip-dev">
-    <img src="https://skillicons.dev/icons?i=react,typescript,tailwindcss,nodejs,express,mongodb,github" alt="Tech Stack" width="300" style="padding: 15px 0;">
-  </a>
+  <img src="https://skillicons.dev/icons?i=react,typescript,tailwindcss,nodejs,express,mongodb,github" alt="Tech Stack" width="300">
 </div>
 
-<h3 align="center">
+<p align="center">
   A secure MERN authentication system with user registration, email verification, login, logout, password reset, and profile management.
-</h3>
+</p>
 
----
+<div align="center">
+  <img src="https://github.com/soumadip-dev/AuthSystem-MERN/blob/main/client/src/assets/ss.png" alt="Auth System screenshot" width="900">
+</div>
 
 ## 🌟 Features
 
@@ -23,8 +27,6 @@
 - **Password Hashing**: bcrypt-based hashing for secure password storage.
 - **Email Notifications**: Nodemailer-powered emails for verification and password resets.
 
----
-
 ## 🛠️ Tech Stack
 
 - **Frontend**: React, Tailwind CSS, Tanstack Query, React Router
@@ -32,8 +34,6 @@
 - **Database**: MongoDB with Mongoose – flexible document-based storage
 - **Email Service**: Nodemailer
 - **SMTP Server**: Brevo
-
----
 
 ## 🛠️ Installation & Setup
 
@@ -99,5 +99,3 @@
      cd ../client
      npm run dev
      ```
-
----
