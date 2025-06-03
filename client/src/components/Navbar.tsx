@@ -9,7 +9,7 @@ const Navbar: FC = () => {
       <img
         src={assets.logo}
         alt="logo"
-        className="w-[80px] sm:w-24 transition-transform hover:scale-105 cursor-pointer"
+        className=" w-28 sm:w-32 transition-transform hover:scale-105 cursor-pointer"
       />
       <button
         className="flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-sm"
