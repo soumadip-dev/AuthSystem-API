@@ -127,16 +127,16 @@ const Login: FC = () => {
                   {passwordChecks.length ? '✓' : '✗'} At least 8 characters
                 </li>
                 <li className={passwordChecks.upper ? 'text-emerald-400' : ''}>
-                  {passwordChecks.upper ? '✓' : '✗'} Uppercase letter
+                  {passwordChecks.upper ? '✓' : '✗'} Contains Uppercase letter
                 </li>
                 <li className={passwordChecks.lower ? 'text-emerald-400' : ''}>
-                  {passwordChecks.lower ? '✓' : '✗'} Lowercase letter
+                  {passwordChecks.lower ? '✓' : '✗'} Contains Lowercase letter
                 </li>
                 <li className={passwordChecks.number ? 'text-emerald-400' : ''}>
                   {passwordChecks.number ? '✓' : '✗'} Contains a number
                 </li>
                 <li className={passwordChecks.special ? 'text-emerald-400' : ''}>
-                  {passwordChecks.special ? '✓' : '✗'} Special character
+                  {passwordChecks.special ? '✓' : '✗'} Contains Special character
                 </li>
               </ul>
             </div>
