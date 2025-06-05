@@ -2,9 +2,13 @@ import { createContext, FC, ReactNode, useState } from 'react';
 
 // Define the type of the context value
 interface AppContextType {
-  user: string | null;
-  setUser: (user: string | null) => void;
+  backendUrl: string;
+  isLoggedIn: boolean;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  userData: UserDataType | null; // Replace with actual user type
+  setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
 }
+
 
 // Create the context with a default value
 export const AppContext = createContext<AppContextType | undefined>(undefined);
