@@ -81,7 +81,7 @@ const Login: FC = () => {
             <button
               type="button"
               className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-              onClick={() => navigate('/forgot-password')}
+              onClick={() => navigate('/reset-password')}
             >
               Forgot Password?
             </button>
