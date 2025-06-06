@@ -14,7 +14,7 @@ const Login: FC = () => {
 
       <div className="bg-slate-900/90 backdrop-blur-sm p-8 sm:p-10 rounded-xl shadow-2xl w-full sm:w-96 text-indigo-200 transition-all duration-300 hover:shadow-purple-500/20">
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold mb-2 text-white bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold mb-2 text-white bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text ">
             {state === 'signup' ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-sm text-indigo-300/80">
