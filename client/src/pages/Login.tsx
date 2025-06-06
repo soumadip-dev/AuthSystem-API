@@ -58,6 +58,7 @@ const Login: FC = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
               className="text-indigo-300 hover:text-indigo-200 transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
