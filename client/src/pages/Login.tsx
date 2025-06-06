@@ -57,12 +57,22 @@ const Login: FC = () => {
           {state === 'signup' ? (
             <p className="mt-4 text-center text-gray-400 text-xs">
               Already have an account?{' '}
-              <span className="cursor-pointer text-blue-400 underline">Login here</span>
+              <span
+                className="cursor-pointer text-blue-400 underline"
+                onClick={() => setState('login')}
+              >
+                Login here
+              </span>
             </p>
           ) : (
             <p className="mt-4 text-center text-gray-400 text-xs">
               Don't have an account?{' '}
-              <span className="cursor-pointer text-blue-400 underline">Sign Up</span>
+              <span
+                className="cursor-pointer text-blue-400 underline"
+                onClick={() => setState('signup')}
+              >
+                Sign Up
+              </span>
             </p>
           )}
         </form>
