@@ -9,7 +9,6 @@ interface AppContextType {
   setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
 }
 
-
 // Create the context with a default value
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -19,15 +18,17 @@ interface AppContextProviderProps {
 }
 
 export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URl;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL as string; // Ensure this is set
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(false);
-  const value = {
+  const [userData, setUserData] = useState<UserDataType | null>(null);
+
+  const value: AppContextType = {
     backendUrl,
     isLoggedIn,
     setIsLoggedIn,
     userData,
     setUserData,
   };
+
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
