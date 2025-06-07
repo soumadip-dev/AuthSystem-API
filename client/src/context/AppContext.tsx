@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useState } from 'react';
+import type { createContext, FC, ReactNode} from 'react';
 
 // Define the type of the context value
 interface AppContextType {
@@ -7,6 +7,13 @@ interface AppContextType {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   userData: UserDataType | null; // Replace with actual user type
   setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
+}
+
+// Define the type for user data
+interface UserDataType {
+  name: string;
+  email: string;
+  isVerified: boolean;
 }
 
 // Create the context with a default value
