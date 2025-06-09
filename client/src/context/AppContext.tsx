@@ -1,4 +1,5 @@
-import type { createContext, FC, ReactNode} from 'react';
+import type { FC, ReactNode } from 'react';
+import { createContext, useState } from 'react';
 
 // Define the type of the context value
 interface AppContextType {
