@@ -1,21 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { createContext, useState } from 'react';
-
-// Define the type of the context value
-interface AppContextType {
-  backendUrl: string;
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: UserDataType | null; // Replace with actual user type
-  setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
-}
-
-// Define the type for user data
-interface UserDataType {
-  name: string;
-  email: string;
-  isVerified: boolean;
-}
+import type { AppContextType, UserDataType } from '../types/global';
 
 // Create the context with a default value
 export const AppContext = createContext<AppContextType | undefined>(undefined);
