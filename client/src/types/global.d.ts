@@ -19,3 +19,10 @@ export interface AppContextType {
   userData: UserDataType | null;
   setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
 }
+
+export interface RegisterCredentials {
+  name: string;
+  email: string;
+  password: string;
+}
+
