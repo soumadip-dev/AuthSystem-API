@@ -26,3 +26,7 @@ export interface RegisterCredentials {
   password: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+  success: boolean;
+}
