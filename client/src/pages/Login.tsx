@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, type FC, useContext } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { registerUser, loginUser } from '../api/auth.api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AppContext } from '../context/AppContext';
 
 const Login: FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Login: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('soumadipmajila@gmail.com');
   const [password, setPassword] = useState('8Uh9M96cZq$');
+  const { setIsLoggedIn } = useContext(AppContext);
 
   const { mutate: registerMutate, isPending: isRegistering } = useMutation<
     RegisterResponse,
@@ -26,10 +28,12 @@ const Login: FC = () => {
       setName('');
       setEmail('');
       setPassword('');
+      setIsLoggedIn(true);
       toast.success('Registration successful! Please check your email for verification.');
-      navigate('/email-verify');
     },
     onError: (error: Error) => {
+      setName('');
+      setEmail('');
       toast.error(error.message || 'Registration failed. Please try again.');
     },
   });
@@ -37,10 +41,14 @@ const Login: FC = () => {
   const { mutate: loginMutate, isPending: isLoggingIn } = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
+      setEmail('');
+      setPassword('');
+      setIsLoggedIn(true);
       toast.success('Login successful! Redirecting...');
-      navigate('/');
     },
     onError: (error: Error) => {
+      setEmail('');
+      setPassword('');
       toast.error(error.message || 'Login failed. Please check your credentials.');
     },
   });
