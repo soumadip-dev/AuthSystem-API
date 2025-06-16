@@ -2,7 +2,12 @@ import { useState, type FC, useContext } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { PasswordChecks, RegisterCredentials, RegisterResponse } from '../types/global';
+import type {
+  PasswordChecks,
+  RegisterCredentials,
+  RegisterResponse,
+  LoginCredentials,
+} from '../types/global';
 import { useMutation } from '@tanstack/react-query';
 import { registerUser, loginUser } from '../api/auth.api';
 import { toast } from 'react-toastify';
@@ -41,7 +46,11 @@ const Login: FC = () => {
     },
   });
 
-  const { mutate: loginMutate, isPending: isLoggingIn } = useMutation({
+  const { mutate: loginMutate, isPending: isLoggingIn } = useMutation<
+    RegisterResponse,
+    Error,
+    LoginCredentials
+  >({
     mutationFn: loginUser,
     onSuccess: () => {
       setEmail('');
