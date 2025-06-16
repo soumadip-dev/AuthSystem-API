@@ -16,7 +16,10 @@ const Login: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('soumadipmajila@gmail.com');
   const [password, setPassword] = useState('8Uh9M96cZq$');
-  const { setIsLoggedIn } = useContext(AppContext);
+
+  const context = useContext(AppContext);
+  if (!context) throw new Error('Login must be used within an AppContextProvider');
+  const { setIsLoggedIn } = context;
 
   const { mutate: registerMutate, isPending: isRegistering } = useMutation<
     RegisterResponse,
