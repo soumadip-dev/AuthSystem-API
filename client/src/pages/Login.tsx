@@ -40,8 +40,6 @@ const Login: FC = () => {
       toast.success('Registration successful! Please check your email for verification.');
     },
     onError: (error: Error) => {
-      setName('');
-      setEmail('');
       toast.error(error.message || 'Registration failed. Please try again.');
     },
   });
@@ -53,8 +51,6 @@ const Login: FC = () => {
   >({
     mutationFn: loginUser,
     onSuccess: () => {
-      setEmail('');
-      setPassword('');
       setIsLoggedIn(true);
       toast.success('Login successful! Redirecting...');
     },
