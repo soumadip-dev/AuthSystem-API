@@ -39,8 +39,11 @@ const Login: FC = () => {
       setIsLoggedIn(true);
       toast.success('Registration successful! Please check your email for verification.');
     },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Registration failed. Please try again.');
+    onError: (error: any) => {
+      // Change the error type to any to access response data
+      const errorMessage =
+        error.response?.data?.message || 'Registration failed. Please try again.';
+      toast.error(errorMessage);
     },
   });
 
@@ -54,10 +57,13 @@ const Login: FC = () => {
       setIsLoggedIn(true);
       toast.success('Login successful! Redirecting...');
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
+      // Change the error type to any to access response data
       setEmail('');
       setPassword('');
-      toast.error(error.message || 'Login failed. Please check your credentials.');
+      const errorMessage =
+        error.response?.data?.message || 'Login failed. Please check your credentials.';
+      toast.error(errorMessage);
     },
   });
 
