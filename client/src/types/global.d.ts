@@ -20,15 +20,20 @@ export interface AppContextType {
   setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
 }
 
+export interface ApiResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ApiError {
+  message: string;
+  success: boolean;
+}
+
 export interface RegisterCredentials {
   name: string;
   email: string;
   password: string;
-}
-
-export interface RegisterResponse {
-  message: string;
-  success: boolean;
 }
 
 export interface LoginCredentials {
