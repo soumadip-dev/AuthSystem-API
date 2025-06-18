@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type {
   PasswordChecks,
   RegisterCredentials,
-  RegisterResponse,
+  ApiResponse,
   LoginCredentials,
 } from '../types/global';
 import { useMutation } from '@tanstack/react-query';
@@ -27,7 +27,7 @@ const Login: FC = () => {
   const { setIsLoggedIn } = context;
 
   const { mutate: registerMutate, isPending: isRegistering } = useMutation<
-    RegisterResponse,
+    ApiResponse,
     Error,
     RegisterCredentials
   >({
@@ -48,7 +48,7 @@ const Login: FC = () => {
   });
 
   const { mutate: loginMutate, isPending: isLoggingIn } = useMutation<
-    RegisterResponse,
+    ApiResponse,
     Error,
     LoginCredentials
   >({
