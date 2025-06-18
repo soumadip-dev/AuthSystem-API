@@ -28,8 +28,12 @@ export interface ApiResponse {
 export interface ApiError {
   message: string;
   success: boolean;
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 }
-
 export interface RegisterCredentials {
   name: string;
   email: string;
