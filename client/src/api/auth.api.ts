@@ -1,8 +1,8 @@
 import axiosInstance from '../utils/axiosInstance';
-import type { RegisterCredentials, RegisterResponse, LoginCredentials } from '../types/global';
+import type { RegisterCredentials, ApiResponse, LoginCredentials } from '../types/global';
 
 // Mutation for register user
-export const registerUser = async (credentials: RegisterCredentials): Promise<RegisterResponse> => {
+export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/register', {
     name: credentials.name,
     email: credentials.email,
@@ -13,7 +13,7 @@ export const registerUser = async (credentials: RegisterCredentials): Promise<Re
 };
 
 // Mutation for login user
-export const loginUser = async (credentials: LoginCredentials): Promise<RegisterResponse> => {
+export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponse> => {
   const response = await axiosInstance.post('/api/v1/users/login', {
     email: credentials.email,
     password: credentials.password,
