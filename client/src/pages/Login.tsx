@@ -6,6 +6,7 @@ import type {
   PasswordChecks,
   RegisterCredentials,
   ApiResponse,
+  ApiError,
   LoginCredentials,
 } from '../types/global';
 import { useMutation } from '@tanstack/react-query';
@@ -28,7 +29,7 @@ const Login: FC = () => {
 
   const { mutate: registerMutate, isPending: isRegistering } = useMutation<
     ApiResponse,
-    Error,
+    ApiError,
     RegisterCredentials
   >({
     mutationFn: registerUser,
@@ -39,8 +40,8 @@ const Login: FC = () => {
       setIsLoggedIn(true);
       toast.success('Registration successful! Please check your email for verification.');
     },
-    onError: (error: any) => {
-      // Change the error type to any to access response data
+    onError: (error: ApiError) => {
+      // Remove the any type
       const errorMessage =
         error.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(errorMessage);
@@ -49,7 +50,7 @@ const Login: FC = () => {
 
   const { mutate: loginMutate, isPending: isLoggingIn } = useMutation<
     ApiResponse,
-    Error,
+    ApiError,
     LoginCredentials
   >({
     mutationFn: loginUser,
@@ -57,8 +58,8 @@ const Login: FC = () => {
       setIsLoggedIn(true);
       toast.success('Login successful! Redirecting...');
     },
-    onError: (error: any) => {
-      // Change the error type to any to access response data
+    onError: (error: ApiError) => {
+      // Remove the any type
       setEmail('');
       setPassword('');
       const errorMessage =
