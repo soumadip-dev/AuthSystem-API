@@ -1,6 +1,8 @@
 import { useRef, useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
+import { sendPasswordResetEmail } from '../api/authApi';
+import { toast } from 'react-toastify';
 
 const ResetPassword: FC = () => {
   const navigate = useNavigate();
@@ -41,6 +43,19 @@ const ResetPassword: FC = () => {
     }
   };
 
+  const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await sendPasswordResetEmail(email);
+      if (response.success) toast.success(response.message);
+      else toast.error(response.message);
+      setIsEmailSent(true);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to send reset email. Please try again.');
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
@@ -58,7 +73,7 @@ const ResetPassword: FC = () => {
             <p className="text-sm text-indigo-300/80">Enter your email to receive a reset link</p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={onSubmitEmail}>
             <div className="relative">
               <img
                 src={assets.mail_icon}
