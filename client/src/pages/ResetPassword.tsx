@@ -4,6 +4,11 @@ import { assets } from '../assets/assets';
 import { resetPassword, sendPasswordResetEmail } from '../api/authApi';
 import { toast } from 'react-toastify';
 
+interface ApiResponse {
+  success: boolean;
+  message: string;
+}
+
 const ResetPassword: FC = () => {
   const navigate = useNavigate();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -46,7 +51,7 @@ const ResetPassword: FC = () => {
   const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await sendPasswordResetEmail(email);
+      const response = (await sendPasswordResetEmail(email)) as ApiResponse;
       if (response.success) toast.success(response.message);
       else toast.error(response.message);
       setIsEmailSent(true);
@@ -66,12 +71,12 @@ const ResetPassword: FC = () => {
   const onSubmitNewPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await resetPassword(email, otp, newPassword);
+      const response = (await resetPassword(email, otp, newPassword)) as ApiResponse;
       if (response.success) toast.success(response.message);
       else toast.error(response.message);
       navigate('/login');
-    } catch (error) {
-      console.error(error?.message);
+    } catch (error: unknown) {
+      console.error((error as Error).message);
       toast.error('Failed to reset password. Please try again.');
     }
   };
@@ -144,8 +149,10 @@ const ResetPassword: FC = () => {
                     ref={el => {
                       if (el) inputRefs.current[index] = el;
                     }}
-                    onInput={e => handleInput(e, index)}
-                    onKeyDown={e => handleKeyDown(e, index)}
+                    onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e, index)}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                      handleKeyDown(e, index)
+                    }
                   />
                 ))}
             </div>
