@@ -1,7 +1,7 @@
 import { useRef, useState, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
-import { sendPasswordResetEmail } from '../api/authApi';
+import { resetPassword, sendPasswordResetEmail } from '../api/authApi';
 import { toast } from 'react-toastify';
 
 const ResetPassword: FC = () => {
@@ -61,6 +61,19 @@ const ResetPassword: FC = () => {
     const otpArray = inputRefs.current.map(input => input?.value);
     setOtp(otpArray.join(''));
     setIsOtpSubmited(true);
+  };
+
+  const onSubmitNewPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await resetPassword(email, otp, newPassword);
+      if (response.success) toast.success(response.message);
+      else toast.error(response.message);
+      navigate('/login');
+    } catch (error) {
+      console.error(error?.message);
+      toast.error('Failed to reset password. Please try again.');
+    }
   };
 
   return (
@@ -157,7 +170,7 @@ const ResetPassword: FC = () => {
             <p className="text-sm text-indigo-300/80">Enter your new password</p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={onSubmitNewPassword}>
             <div className="relative">
               <img
                 src={assets.lock_icon}
