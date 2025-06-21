@@ -56,6 +56,13 @@ const ResetPassword: FC = () => {
     }
   };
 
+  const onSubmitOtp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const otpArray = inputRefs.current.map(input => input?.value);
+    setOtp(otpArray.join(''));
+    setIsOtpSubmited(true);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400">
       <img
@@ -110,7 +117,7 @@ const ResetPassword: FC = () => {
             </h2>
             <p className="text-sm text-indigo-300/80">Enter the 6-digit code sent to your email</p>
           </div>
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={onSubmitOtp}>
             <div className="flex justify-between mb-4" onPaste={handlePaste}>
               {Array(6)
                 .fill(0)
@@ -139,6 +146,7 @@ const ResetPassword: FC = () => {
           </form>
         </div>
       )}
+
       {/* Enter new password */}
       {isOtpSubmited && isEmailSent && (
         <div className="bg-slate-900/90 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-2xl w-full sm:w-96 text-indigo-200">
