@@ -19,7 +19,7 @@ const Login: FC = () => {
 
   const context = useContext(AppContext);
   if (!context) throw new Error('Login must be used within an AppContextProvider');
-  const { setIsLoggedIn, setUserData, isLoggedIn, checkAuthAndFetchUser } = context;
+  const { isLoggedIn, checkAuthAndFetchUser } = context;
 
   const handleRegister = async (credentials: RegisterCredentials) => {
     try {
