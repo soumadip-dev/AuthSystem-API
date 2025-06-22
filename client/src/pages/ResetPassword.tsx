@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { resetPassword, sendPasswordResetEmail } from '../api/authApi';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface ApiResponse {
   success: boolean;
@@ -17,6 +18,7 @@ const ResetPassword: FC = () => {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [otp, setOtp] = useState('');
   const [isOtpSubmited, setIsOtpSubmited] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
@@ -79,6 +81,10 @@ const ResetPassword: FC = () => {
       console.error((error as Error).message);
       toast.error('Failed to reset password. Please try again.');
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -185,14 +191,22 @@ const ResetPassword: FC = () => {
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
               />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="newPassword"
                 placeholder="New Password"
                 required
                 value={newPassword}
                 onChange={e => setNewPassword(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[#333A5C]/80 text-white rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none placeholder-indigo-300/70"
+                className="w-full pl-12 pr-12 py-3 bg-[#333A5C]/80 text-white rounded-xl focus:bg-[#333A5C] focus:ring-2 focus:ring-indigo-500 outline-none placeholder-indigo-300/70"
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-indigo-300 hover:text-white transition-colors"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
             <button
               type="submit"
