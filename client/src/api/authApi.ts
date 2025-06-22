@@ -10,7 +10,7 @@ import type {
 } from '../types/global';
 
 //* Import axios
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 //* register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
