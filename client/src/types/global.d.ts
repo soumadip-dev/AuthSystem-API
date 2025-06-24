@@ -28,7 +28,7 @@ export interface ApiResponse {
 }
 
 export interface GetUserResponse extends ApiResponse {
-  userData: UserDataType;
+  userData: UserDataType | null;
 }
 
 export interface ApiError {
