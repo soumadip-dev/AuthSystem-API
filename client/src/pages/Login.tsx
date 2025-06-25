@@ -24,10 +24,15 @@ const Login: FC = () => {
   const handleRegister = async (credentials: RegisterCredentials) => {
     try {
       setIsSubmitting(true);
-      await registerUser(credentials);
+      const response = await registerUser(credentials);
       setName('');
       setEmail('');
       setPassword('');
+      if (response.success) {
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
       await checkAuthAndFetchUser(); // Fetch user data after successful registration
       navigate('/');
     } catch (error: unknown) {
