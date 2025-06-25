@@ -47,7 +47,12 @@ const Login: FC = () => {
   const handleLogin = async (credentials: LoginCredentials) => {
     try {
       setIsSubmitting(true);
-      await loginUser(credentials);
+      const response = await loginUser(credentials);
+      if (response.success) {
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
       await checkAuthAndFetchUser(); // Fetch user data after successful login
       navigate('/');
     } catch (error: unknown) {
