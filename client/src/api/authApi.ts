@@ -54,8 +54,19 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
 
 //* getting current user
 export const getCurrentUser = async (): Promise<GetUserResponse> => {
-  const response = await axiosInstance.get('/api/v1/users/user-details');
-  return response.data;
+  try {
+    const response = await axiosInstance.get('/api/v1/users/user-details');
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as GetUserResponse;
+    }
+    return {
+      success: false,
+      message: 'Network error occurred',
+      user: null,
+    };
+  }
 };
 
 //* checking if user is logged in
