@@ -74,11 +74,17 @@ export const isAuthenticated = async (): Promise<ApiResponse> => {
   try {
     const response = await axiosInstance.get('/api/v1/users/is-auth');
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       return { success: false, message: 'Not authenticated' };
     }
-    throw error; // Re-throw other errors
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
+    }
+    return {
+      success: false,
+      message: 'Network error occurred',
+    };
   }
 };
 
