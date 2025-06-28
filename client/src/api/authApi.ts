@@ -90,8 +90,18 @@ export const isAuthenticated = async (): Promise<ApiResponse> => {
 
 //* logout user
 export const logoutUser = async (): Promise<ApiResponse> => {
-  const response = await axiosInstance.post('/api/v1/users/logout');
-  return response.data;
+  try {
+    const response = await axiosInstance.post('/api/v1/users/logout');
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
+    }
+    return {
+      success: false,
+      message: 'Network error occurred',
+    };
+  }
 };
 
 //* send verification email
