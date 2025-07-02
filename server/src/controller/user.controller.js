@@ -10,7 +10,6 @@ import {
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
-import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
