@@ -5,6 +5,7 @@ import {
   verifyUserService,
   sendPasswordResetEmailService,
   resetPasswordService,
+  getUserDetailsService,
 } from '../services/user.service.js';
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
@@ -246,14 +247,10 @@ const resetPassword = async (req, res) => {
 //* Controller to get user details
 const getUserDetails = async (req, res) => {
   try {
-    // Grt userId from middleware
+    // Get userId from middleware
     const { userId } = req.user;
 
-    // Find the user
-    const user = await User.findById(userId);
-
-    // Check if user exists
-    if (!user) throw new Error('User not found');
+    const user = await getUserDetailsService(userId);
 
     // Send success response
     return res.status(200).json({

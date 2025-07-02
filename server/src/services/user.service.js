@@ -190,3 +190,14 @@ export const resetPasswordService = async (email, otp, newPassword) => {
   // Save the user
   await user.save();
 };
+
+export const getUserDetailsService = async userId => {
+  // Find the user
+  const user = await User.findById(userId);
+
+  // Check if user exists
+  if (!user) throw new Error('User not found');
+
+  // Return the user
+  return user;
+};
