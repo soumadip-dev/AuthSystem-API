@@ -191,6 +191,7 @@ export const resetPasswordService = async (email, otp, newPassword) => {
   await user.save();
 };
 
+//* Service to get user details
 export const getUserDetailsService = async userId => {
   // Find the user
   const user = await User.findById(userId);
