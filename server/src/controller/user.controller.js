@@ -9,6 +9,7 @@ import {
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
+import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -242,6 +243,33 @@ const resetPassword = async (req, res) => {
   }
 };
 
+//* Controller to get user details
+const getUserDetails = async (req, res) => {
+  try {
+    // Grt userId from middleware
+    const { userId } = req.user;
+
+    // Find the user
+    const user = await User.findById(userId);
+
+    // Check if user exists
+    if (!user) throw new Error('User not found');
+
+    // Send success response
+    return res.status(200).json({
+      message: 'User details fetched successfully',
+      success: true,
+      userData: { name: user.name, email: user.email, isVerified: user.isVerified },
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
 export {
   registerUser,
@@ -252,4 +280,5 @@ export {
   isAuthenticated,
   sendPasswordResetEmail,
   resetPassword,
+  getUserDetails,
 };
