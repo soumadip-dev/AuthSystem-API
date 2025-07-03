@@ -6,6 +6,12 @@ export const isValidEmail = email => {
 
 // Password Regex Validation
 export const isStrongPassword = password => {
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  // Explanation:
+  // (?=.*[a-z])        -> must contain at least one lowercase letter
+  // (?=.*[A-Z])        -> must contain at least one uppercase letter
+  // (?=.*\d)           -> must contain at least one digit
+  // (?=.*[^A-Za-z0-9]) -> must contain at least one special character
+  // .{6,}              -> must be at least 6 characters long
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
   return passwordRegex.test(password);
 };
