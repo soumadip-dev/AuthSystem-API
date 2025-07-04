@@ -3,11 +3,11 @@ import {
   loginService,
   sendVerificationEmailService,
   verifyUserService,
+  sendPasswordResetEmailService,
 } from '../services/user.service.js';
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
-import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -185,27 +185,9 @@ const sendPasswordResetEmail = async (req, res) => {
   // Get the email from body
   const { email } = req.body;
 
-  // Chek if email is provided
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required', success: false });
-  }
-
   try {
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found', success: false });
-    }
-
-    // Generate OTP
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-    // update user resetPasswordOtp and resetPasswordOtpExpiry
-    user.resetPasswordOtp = otp;
-    user.resetPasswordOtpExpiry = Date.now() + 24 * 60 * 60 * 1000;
-
-    // Save the updated user
-    await user.save();
+    // Get the user and otp from sendPasswordResetEmailService
+    const { user, otp } = await sendPasswordResetEmailService(email);
 
     // Send password reset email to user
     const mailOptions = generateMailOptions({

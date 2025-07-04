@@ -119,3 +119,29 @@ export const verifyUserService = async (userId, otp) => {
   // Save the updated user
   await user.save();
 };
+
+//* Service for send password reset OTP to the user's email
+export const sendPasswordResetEmailService = async email => {
+  // Chek if email is provided
+  if (!email) {
+    throw new Error('Email is required');
+  }
+
+  // Check if user exists
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // Generate OTP
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+  // update user resetPasswordOtp and resetPasswordOtpExpiry
+  user.resetPasswordOtp = otp;
+  user.resetPasswordOtpExpiry = Date.now() + 24 * 60 * 60 * 1000;
+
+  // Save the updated user
+  await user.save();
+
+  return { user, otp };
+};
