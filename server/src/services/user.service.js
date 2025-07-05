@@ -1,6 +1,6 @@
 import User from '../model/User.model.js';
 import { isValidEmail, isStrongPassword } from '../utils/validation.utils.js';
-import { ENV } from '../config/env.js';
+import { ENV } from '../config/env.config.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 

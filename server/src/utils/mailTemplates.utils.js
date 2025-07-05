@@ -1,4 +1,4 @@
-import { ENV } from '../config/env.js';
+import { ENV } from '../config/env.config.js';
 
 //* Function to generate mail options
 export default function generateMailOptions({ user, otp, type, companyName }) {

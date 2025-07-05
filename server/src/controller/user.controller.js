@@ -4,7 +4,7 @@ import {
   sendVerificationEmailService,
   verifyUserService,
 } from '../services/user.service.js';
-import { ENV } from '../config/env.js';
+import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
 
