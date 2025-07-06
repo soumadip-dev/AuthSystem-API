@@ -7,6 +7,7 @@ import {
   verifyUser,
   isAuthenticated,
   sendPasswordResetEmail,
+  resetPassword,
 } from '../controller/user.controller.js';
 import { userAuth } from '../middleware/user.middleware.js';
 
@@ -21,6 +22,7 @@ router.post('/send-verification-email', userAuth, sendVerificationEmail);
 router.post('/verify-user', userAuth, verifyUser);
 router.post('/is-auth', userAuth, isAuthenticated);
 router.post('/send-pass-reset-email', sendPasswordResetEmail);
+router.post('/reset-password', resetPassword);
 
 //* Export the router
 export default router;
