@@ -145,3 +145,48 @@ export const sendPasswordResetEmailService = async email => {
 
   return { user, otp };
 };
+
+//* Service for reset password
+export const resetPasswordService = async (email, otp, newPassword) => {
+  // Check if email, otp, and newPassword are provided
+  if (!email || !otp || !newPassword) {
+    throw new Error('Email, OTP, and new password are required');
+  }
+
+  // Find user based on email
+  const user = await User.findOne({ email });
+
+  // Check if the user exists or not
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // Check if provided OTP is valid or not
+  if (user.resetPasswordOtp === '' || user.resetPasswordOtp !== otp) {
+    throw new Error('Invalid OTP');
+  }
+
+  // Check if OTP has expired or not
+  if (user.resetPasswordOtpExpiry < Date.now()) {
+    throw new Error('OTP has expired');
+  }
+
+  // Check if password is strong enough or not
+  if (!isStrongPassword(newPassword)) {
+    throw new Error('Password is not strong enough');
+  }
+
+  // Check if password is sam eas previous
+  const isPasswordSame = await bcrypt.compare(newPassword, user.password);
+  if (isPasswordSame) {
+    throw new Error('Password is same as previous');
+  }
+
+  // Change the password
+  user.password = newPassword;
+  user.resetPasswordOtp = '';
+  user.resetPasswordOtpExpiry = 0;
+
+  // Save the user
+  await user.save();
+};
