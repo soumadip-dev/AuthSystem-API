@@ -8,6 +8,9 @@ import {
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
+import User from '../model/User.model.js';
+import { isStrongPassword } from '../utils/validation.utils.js';
+import bcrypt from 'bcryptjs';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -218,6 +221,70 @@ const sendPasswordResetEmail = async (req, res) => {
   }
 };
 
+//* Controller to reset password with the OTP
+const resetPassword = async (req, res) => {
+  // Get otp from request body
+  const { email, otp, newPassword } = req.body;
+
+  // Check if email, otp, and newPassword are provided
+  if (!email || !otp || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: 'Email, OTP, and new password are required', success: false });
+  }
+
+  try {
+    // Find user based on email
+    const user = await User.findOne({ email });
+
+    // Check if the user exists or not
+    if (!user) {
+      return res.status(404).json({ message: 'User not found', success: false });
+    }
+
+    // Check if provided OTP is valid or not
+    if (user.resetPasswordOtp === '' || user.resetPasswordOtp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP', success: false });
+    }
+
+    // Check if OTP has expired or not
+    if (user.resetPasswordOtpExpiry < Date.now()) {
+      return res.status(400).json({ message: 'OTP has expired', success: false });
+    }
+
+    // Check if password is strong enough or not
+    if (!isStrongPassword(newPassword)) {
+      return res.status(400).json({ message: 'Password is not strong enough', success: false });
+    }
+
+    // Check if password is sam eas previous
+    const isPasswordSame = await bcrypt.compare(newPassword, user.password);
+    if (isPasswordSame) {
+      return res.status(400).json({ message: 'Password is same as previous', success: false });
+    }
+
+    // Change the password
+    user.password = newPassword;
+    user.resetPasswordOtp = '';
+    user.resetPasswordOtpExpiry = 0;
+
+    // Save the user
+    await user.save();
+
+    // Send success response
+    return res.status(200).json({
+      message: 'Password reset successfully',
+      success: true,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
 export {
   registerUser,
@@ -227,4 +294,5 @@ export {
   verifyUser,
   isAuthenticated,
   sendPasswordResetEmail,
+  resetPassword,
 };
