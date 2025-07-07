@@ -113,8 +113,8 @@ export const verifyUserService = async (userId, otp) => {
 
   // Update user verification status
   user.isVerified = true;
-  user.verificationOtp = null;
-  user.verificationOtpExpiry = null;
+  user.verificationOtp = '';
+  user.verificationOtpExpiry = 0;
 
   // Save the updated user
   await user.save();
