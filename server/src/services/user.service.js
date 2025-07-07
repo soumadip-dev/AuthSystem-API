@@ -90,3 +90,29 @@ export const sendVerificationEmailService = async userId => {
 
   return { user, otp };
 };
+
+//* Service for verify user
+export const verifyUserService = async (userId, otp) => {
+  // Get user by ID
+  const user = await User.findById(userId);
+
+  // Check if user exists
+  if (!user) throw new Error('User not found');
+
+  // Check if user is already verified
+  if (user.isVerified) throw new Error('User already verified');
+
+  // Check if OTP is valid
+  if (user.verificationOtp !== otp) throw new Error('Invalid OTP');
+
+  // Check if OTP has expired
+  if (user.verificationOtpExpiry < Date.now()) throw new Error('OTP has expired');
+
+  // Update user verification status
+  user.isVerified = true;
+  user.verificationOtp = null;
+  user.verificationOtpExpiry = null;
+
+  // Save the updated user
+  await user.save();
+};

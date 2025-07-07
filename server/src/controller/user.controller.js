@@ -2,6 +2,7 @@ import {
   registerService,
   loginService,
   sendVerificationEmailService,
+  verifyUserService,
 } from '../services/user.service.js';
 import { ENV } from '../config/env.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
@@ -143,34 +144,7 @@ const verifyUser = async (req, res) => {
   const { userId, otp } = req.body;
 
   try {
-    // Get user by ID
-    const user = await User.findById(userId);
-
-    // Check if user exists
-    if (!user) throw new Error('User not found');
-
-    // Check if user is already verified
-    if (user.isVerified) throw new Error('User already verified');
-
-    console.log(user);
-
-    console.log('DB', user.verificationOtp);
-    console.log('BODY', otp);
-
-    // Check if OTP is valid
-    if (user.verificationOtp !== otp) throw new Error('Invalid OTP');
-
-    // Check if OTP has expired
-    if (user.verificationOtpExpiry < Date.now()) throw new Error('OTP has expired');
-
-    // Update user verification status
-    user.isVerified = true;
-    user.verificationOtp = null;
-    user.verificationOtpExpiry = null;
-
-    // Save the updated user
-    await user.save();
-
+    await verifyUserService(userId, otp);
     // Send success response
     return res.status(200).json({
       message: 'User verified successfully',
