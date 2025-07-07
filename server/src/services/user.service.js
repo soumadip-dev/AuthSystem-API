@@ -99,6 +99,9 @@ export const verifyUserService = async (userId, otp) => {
   // Check if user exists
   if (!user) throw new Error('User not found');
 
+  // Check if OTP is provided
+  if (!otp) throw new Error('OTP is required');
+
   // Check if user is already verified
   if (user.isVerified) throw new Error('User already verified');
 
