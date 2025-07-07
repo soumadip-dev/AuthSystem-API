@@ -6,6 +6,7 @@ import {
 import { ENV } from '../config/env.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.js';
+import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -136,5 +137,53 @@ const sendVerificationEmail = async (req, res) => {
   }
 };
 
+//* Controller to verify user with the OTP
+const verifyUser = async (req, res) => {
+  // Get fields from request body
+  const { userId, otp } = req.body;
+
+  try {
+    // Get user by ID
+    const user = await User.findById(userId);
+
+    // Check if user exists
+    if (!user) throw new Error('User not found');
+
+    // Check if user is already verified
+    if (user.isVerified) throw new Error('User already verified');
+
+    console.log(user);
+
+    console.log('DB', user.verificationOtp);
+    console.log('BODY', otp);
+
+    // Check if OTP is valid
+    if (user.verificationOtp !== otp) throw new Error('Invalid OTP');
+
+    // Check if OTP has expired
+    if (user.verificationOtpExpiry < Date.now()) throw new Error('OTP has expired');
+
+    // Update user verification status
+    user.isVerified = true;
+    user.verificationOtp = null;
+    user.verificationOtpExpiry = null;
+
+    // Save the updated user
+    await user.save();
+
+    // Send success response
+    return res.status(200).json({
+      message: 'User verified successfully',
+      success: true,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
-export { registerUser, loginUser, logoutUser, sendVerificationEmail };
+export { registerUser, loginUser, logoutUser, sendVerificationEmail, verifyUser };
