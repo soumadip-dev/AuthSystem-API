@@ -6,8 +6,7 @@ import {
 } from '../services/user.service.js';
 import { ENV } from '../config/env.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
-import transporter from '../config/nodemailer.js';
-import User from '../model/User.model.js';
+import transporter from '../config/nodemailer.config.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
