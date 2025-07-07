@@ -106,7 +106,7 @@ export const verifyUserService = async (userId, otp) => {
   if (user.isVerified) throw new Error('User already verified');
 
   // Check if OTP is valid
-  if (user.verificationOtp !== otp) throw new Error('Invalid OTP');
+  if (user.verificationOtp === '' || user.verificationOtp !== otp) throw new Error('Invalid OTP');
 
   // Check if OTP has expired
   if (user.verificationOtpExpiry < Date.now()) throw new Error('OTP has expired');
