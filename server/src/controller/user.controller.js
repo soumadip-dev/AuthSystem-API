@@ -4,7 +4,7 @@ import {
   sendVerificationEmailService,
 } from '../services/user.service.js';
 import { ENV } from '../config/env.js';
-import generateMailOptions from '../utils/mailTemplates.js';
+import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.js';
 
 //* Controller for registering a user
