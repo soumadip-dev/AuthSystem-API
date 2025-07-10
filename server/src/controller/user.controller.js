@@ -1,5 +1,7 @@
 import { registerService, loginService } from '../services/user.service.js';
 import { ENV } from '../config/env.js';
+import generateMailOptions from '../utils/mailTemplates.js';
+import transporter from '../config/nodemailer.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -18,6 +20,20 @@ const registerUser = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     };
     res.cookie('authToken', token, cookieOptions);
+
+    // Send welcome email to user
+    const mailOptions = generateMailOptions({
+      user: newUser,
+      type: 'welcome',
+      companyName: 'Auth System',
+    });
+
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      return res.status(500).json({ message: 'Email sending failed', success: false });
+    }
 
     // Send success response
     res.status(201).json({
