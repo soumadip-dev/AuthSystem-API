@@ -1,8 +1,11 @@
-import { registerService, loginService } from '../services/user.service.js';
+import {
+  registerService,
+  loginService,
+  sendVerificationEmailService,
+} from '../services/user.service.js';
 import { ENV } from '../config/env.js';
 import generateMailOptions from '../utils/mailTemplates.js';
 import transporter from '../config/nodemailer.js';
-import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -99,32 +102,10 @@ const logoutUser = async (req, res) => {
 
 //* Controller to send verification OTP to the user's email
 const sendVerificationEmail = async (req, res) => {
+  // Get fields from request body
+  const { userId } = req.body;
   try {
-    // Get fields from request body
-    const { userId } = req.body;
-
-    // Find the user by ID
-    const user = await User.findById(userId);
-
-    // Check if user exists
-    if (!user) {
-      return res.status(404).json({ message: 'User not found', success: false });
-    }
-
-    // Check if user is already verified
-    if (user.isVerified) {
-      return res.status(400).json({ message: 'User is already verified', success: false });
-    }
-
-    // Generate OTP
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-    // update user verificationOtp and verificationOtpExpiry
-    user.verificationOtp = otp;
-    user.verificationOtpExpiry = Date.now() + 24 * 60 * 60 * 1000; // 1 day
-
-    // Save the updated user
-    await user.save();
+    const { user, otp } = await sendVerificationEmailService(userId);
 
     // Send verification email to user
     const mailOptions = generateMailOptions({

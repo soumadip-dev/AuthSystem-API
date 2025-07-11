@@ -66,3 +66,27 @@ export const loginService = async (email, password) => {
   // Return user and token
   return { user, token };
 };
+
+//* Service for send verification OTP to the user's email
+export const sendVerificationEmailService = async userId => {
+  // Find the user by ID
+  const user = await User.findById(userId);
+
+  // Check if user exists
+  if (!user) throw new Error('User not found');
+
+  // Check if user is already verified
+  if (user.isVerified) throw new Error('User already verified');
+
+  // Generate OTP
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+  // update user verificationOtp and verificationOtpExpiry
+  user.verificationOtp = otp;
+  user.verificationOtpExpiry = Date.now() + 24 * 60 * 60 * 1000;
+
+  // Save the updated user
+  await user.save();
+
+  return { user, otp };
+};
