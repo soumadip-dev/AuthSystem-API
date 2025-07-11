@@ -2,6 +2,7 @@ import User from '../model/User.model.js';
 import { isValidEmail, isStrongPassword } from '../utils/validation.js';
 import { ENV } from '../config/env.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 //* Service for registering a user
 export const registerService = async (name, email, password) => {
@@ -39,7 +40,7 @@ export const registerService = async (name, email, password) => {
 };
 
 //* Service for logging in a user
-export const loginService = async (name, email, password) => {
+export const loginService = async (email, password) => {
   // Check if email and password are provided
   if (!email || !password) {
     throw new Error('Email and password are required');
