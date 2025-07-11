@@ -13,7 +13,7 @@ export default function generateMailOptions({ user, otp, type, companyName }) {
 
     case 'verifyUser':
       subject = `Your ${companyName} Verification OTP`;
-      message = `Use the following One-Time Password (OTP) to verify your email address: ${otp}\n\nThis OTP is valid for a limited time. Do not share it with anyone.`;
+      message = `Use the following One-Time Password (OTP) to verify your email address: ${otp}\n\nThis OTP is valid for 24 hours. Do not share it with anyone.`;
       break;
 
     case 'forgetPassword':
