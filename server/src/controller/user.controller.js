@@ -59,5 +59,26 @@ const loginUser = async (req, res) => {
   }
 };
 
+//* Controller for logout
+const logoutUser = async (req, res) => {
+  try {
+    // Clear the cookie
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      sameSite: ENV.NODE_ENV === 'production' ? 'none' : 'strict',
+      secure: ENV.NODE_ENV === 'production',
+    });
+
+    // return success message
+    return res.status(200).json({ message: 'User logged out successfully', success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
-export { registerUser, loginUser };
+export { registerUser, loginUser, logoutUser };
