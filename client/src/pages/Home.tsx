@@ -1,9 +1,10 @@
 import type { FC } from 'react';
+import Navbar from '../components/Navbar';
 
 const Home: FC = () => {
   return (
     <div>
-      <h1>Home Page</h1>
+      <Navbar />
     </div>
   );
 };
