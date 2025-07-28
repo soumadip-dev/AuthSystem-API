@@ -3,10 +3,9 @@ import { assets } from '../assets/assets';
 const Navbar: FC = () => {
   return (
     <div>
-      <img src={assets.logo} alt="logo" />
+      <img src={assets.logo} alt="logo" className="w-28 sm:w-32 " />
+      <button>Login</button>
     </div>
   );
 };
 export default Navbar;
-
-// git commit --date="2025-07-28T11:00:00" -m "fix import problem in main.tsx"
