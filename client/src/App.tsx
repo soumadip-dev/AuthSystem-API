@@ -1,9 +1,11 @@
+import type { FC } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import EmailVerify from './pages/EmailVerify';
 import ResetPassword from './pages/ResetPassword';
-const App = () => {
+
+const App: FC = () => {
   return (
     <div>
       <Routes>
@@ -15,4 +17,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
