@@ -99,4 +99,4 @@ const verifyUser = async (req, res) => {
   }
 };
 
-export { registerUser };
+export { registerUser, verifyUser };
