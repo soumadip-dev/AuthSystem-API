@@ -2,6 +2,7 @@ import express from 'express';
 import { ENV } from './utils/env.js';
 import cors from 'cors';
 import { connectDB } from './utils/db.js';
+import registerUser from './routes/user.routes.js';
 
 const app = express();
 
@@ -13,6 +14,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
+
+// Routes
+app.use('/api/v1/users', registerUser);
 
 // Handle GET response from root URl
 app.get('/', (req, res) => {
