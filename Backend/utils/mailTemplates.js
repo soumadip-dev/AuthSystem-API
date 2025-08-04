@@ -1,3 +1,5 @@
+import { ENV } from './env';
+
 export default function generateMailOptions({ user, token, type }) {
   let subject, actionText, actionUrlPath, message;
 
@@ -27,7 +29,7 @@ export default function generateMailOptions({ user, token, type }) {
       throw new Error('Unsupported email type');
   }
 
-  const baseUrl = process.env.BASE_URL;
+  const baseUrl = ENV.BASE_URL;
   const fullActionUrl = actionUrlPath ? `${baseUrl}${actionUrlPath}` : null;
 
   return {
