@@ -1,4 +1,8 @@
 import User from '../model/User.model.js';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import { ENV } from '../utils/env.js';
+
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   // Check if all fields are provided
@@ -25,6 +29,25 @@ const registerUser = async (req, res) => {
     const newUser = await User.create({ name, email, password });
 
     if (!newUser) return res.status(500).json({ message: 'User not registered', success: false });
+
+    const token = crypto.randomBytes(32).toString('hex');
+    console.log(token);
+
+    // Store the token in the user
+    newUser.verificationToken = token;
+
+    // Save the user
+    await User.save(newUser);
+
+    // Configure email transport
+    const transporter = nodemailer.createTransport({
+      host: ENV.MAILTRAP_HOST,
+      port: ENV.MAILTRAP_PORT,
+      auth: {
+        user: ENV.MAILTRAP_USERNAME,
+        pass: ENV.MAILTRAP_PASSWORD,
+      },
+    });
 
     res.status(201).json({ message: 'User created successfully', success: true });
   } catch (error) {
