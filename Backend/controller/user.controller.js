@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import { ENV } from '../utils/env.js';
 import generateMailOptions from '../utils/mailTemplates.js';
 
+// Controller for registering a user
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   // Check if all fields are provided
@@ -26,7 +27,7 @@ const registerUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ message: 'User already exists', success: false });
 
-    // If no User found crate an user
+    // If no User found create an user
     const newUser = await User.create({ name, email, password });
 
     if (!newUser) return res.status(500).json({ message: 'User not registered', success: false });
@@ -64,6 +65,17 @@ const registerUser = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ message: 'Something went wrong', success: false });
   }
+};
+
+// Controller for user verification
+const verifyUser = async (req, res) => {
+  // Get verification token from URL parameters
+  const { token } = req.params;
+  console.log(token);
+
+  // Check if token is provided
+  if (!token)
+    return res.status(400).json({ message: 'Verification token is required', success: false });
 };
 
 export { registerUser };
