@@ -1,4 +1,4 @@
-function generateMailOptions({ user, token, type }) {
+export default function generateMailOptions({ user, token, type }) {
   let subject, actionText, actionUrlPath, message;
 
   switch (type) {
@@ -57,5 +57,3 @@ function generateMailOptions({ user, token, type }) {
     `,
   };
 }
-
-module.exports = generateMailOptions;

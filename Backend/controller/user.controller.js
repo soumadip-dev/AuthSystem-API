@@ -2,6 +2,7 @@ import User from '../model/User.model.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { ENV } from '../utils/env.js';
+import generateMailOptions from '../utils/mailTemplates.js';
 
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -37,7 +38,7 @@ const registerUser = async (req, res) => {
     newUser.verificationToken = token;
 
     // Save the user
-    await User.save(newUser);
+    await newUser.save();
 
     // Configure email transport
     const transporter = nodemailer.createTransport({
@@ -48,6 +49,15 @@ const registerUser = async (req, res) => {
         pass: ENV.MAILTRAP_PASSWORD,
       },
     });
+
+    // Send email
+    const mailOptions = generateMailOptions({ user: newUser, token, type: 'verify' });
+
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+    }
 
     res.status(201).json({ message: 'User created successfully', success: true });
   } catch (error) {
