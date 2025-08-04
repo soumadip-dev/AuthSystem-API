@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 // Import the user controller
-import { registerUser } from '../controllers/user.controller.js';
+import { registerUser } from '../controller/user.controller.js';
 
 // create a new Express router
 const router = Router();
