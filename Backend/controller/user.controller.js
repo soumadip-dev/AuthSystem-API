@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { ENV } from '../utils/env.js';
 import generateMailOptions from '../utils/mailTemplates.js';
-import bcrypt from 'bcryptjs';
 
 // Controller for registering a user
 const registerUser = async (req, res) => {
@@ -28,12 +27,8 @@ const registerUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ message: 'User already exists', success: false });
 
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     // If no User found create an user
-    const newUser = await User.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password });
 
     if (!newUser) return res.status(500).json({ message: 'User not registered', success: false });
 
