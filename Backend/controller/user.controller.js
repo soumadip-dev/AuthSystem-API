@@ -234,4 +234,4 @@ const forgotPassword = async (req, res) => {
 };
 
 // Export controllers
-export { registerUser, verifyUser, login, getMe, logout };
+export { registerUser, verifyUser, login, getMe, logout, forgotPassword };
