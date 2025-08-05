@@ -16,11 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Enable CORS
 app.use(cors());
 
-// Routes
-app.use('/api/v1/users', registerUser);
-
 // Middleware to parse cookies
 app.use(cookieParser());
+
+// Routes
+app.use('/api/v1/users', registerUser);
 
 // Handle GET response from root URl
 app.get('/', (req, res) => {
