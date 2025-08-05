@@ -169,5 +169,18 @@ const getMe = async (req, res) => {
   }
 };
 
+// Controller for logout
+const logout = async (req, res) => {
+  try {
+    // Clear the cookie
+    res.cookie('jwt', '', {});
+    // return success message
+    res.status(200).json({ message: 'User logged out successfully', success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Something went wrong when logging out', success: false });
+  }
+};
+
 // Export controllers
-export { registerUser, verifyUser, login, getMe };
+export { registerUser, verifyUser, login, getMe, logout };
