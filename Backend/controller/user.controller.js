@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { ENV } from '../utils/env.js';
 import generateMailOptions from '../utils/mailTemplates.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // Controller for registering a user
 const registerUser = async (req, res) => {
@@ -99,4 +101,36 @@ const verifyUser = async (req, res) => {
   }
 };
 
+// Controller for user login
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if email and password are provided
+  if (!email || !password)
+    return res.status(400).json({ message: 'Email and password are required', success: false });
+  try {
+    // Find user based on email
+    const user = await User.findOne({ email });
+
+    // Check if user found or not
+    if (!user) return res.status(404).json({ message: 'User not found', success: false });
+
+    // Check if user is verified or not
+    if (!user.isVerified)
+      return res.status(401).json({ message: 'User is not verified', success: false });
+
+    // Check if password is correct or not
+    const isPaswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPaswordCorrect)
+      return res.status(401).json({ message: 'Password is incorrect', success: false });
+
+    // Geberate JWT token
+    const token = jwt.sign({ id: user._id }, ENV.JWT_SECRET, { expiresIn: '1d' });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Something went wrong', success: false });
+  }
+};
+
+// Export controllers
 export { registerUser, verifyUser };
