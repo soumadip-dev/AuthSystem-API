@@ -2,7 +2,7 @@ import express from 'express';
 import { ENV } from './utils/env.js';
 import cors from 'cors';
 import { connectDB } from './utils/db.js';
-import registerUser from './routes/user.routes.js';
+import auth_routes from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -20,7 +20,7 @@ app.use(cors());
 app.use(cookieParser());
 
 // Routes
-app.use('/api/v1/users', registerUser);
+app.use('/api/v1/users', auth_routes);
 
 // Handle GET response from root URl
 app.get('/', (req, res) => {
