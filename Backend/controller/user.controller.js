@@ -5,6 +5,7 @@ import { ENV } from '../utils/env.js';
 import generateMailOptions from '../utils/mailTemplates.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { isValidEmail, isStrongPassword } from '../utils/validation.js';
 
 // Controller for registering a user
 const registerUser = async (req, res) => {
@@ -14,13 +15,11 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'All fields are required', success: false });
 
   // Check if email is valid
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email))
+  if (!isValidEmail(email))
     return res.status(400).json({ message: 'Email is not valid', success: false });
 
   // Check if password is strong enough
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-  if (!passwordRegex.test(password))
+  if (!isStrongPassword(password))
     return res.status(400).json({ message: 'Password is not strong enough', success: false });
 
   try {
@@ -263,8 +262,7 @@ const resetPassword = async (req, res) => {
         .json({ message: 'User not found with this reset token', success: false });
 
     // Check if password is strong enough
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-    if (!passwordRegex.test(password))
+    if (!isStrongPassword(password))
       return res.status(400).json({ message: 'Password is not strong enough', success: false });
 
     // Update the user by setting the password(hashing in pre hook) and remove reset token
