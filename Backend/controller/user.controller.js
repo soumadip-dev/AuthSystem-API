@@ -208,6 +208,9 @@ const forgotPassword = async (req, res) => {
     // Store the token inside resetPasswordToken
     user.resetPasswordToken = token;
 
+    // Set resetPasswordTokenExpire
+    user.resetPasswordExpiry = Date.now() + 10 * 60 * 1000;
+
     // Save the user after updating
     await user.save();
 
@@ -253,7 +256,10 @@ const resetPassword = async (req, res) => {
 
   try {
     // Find user based on reset token
-    const user = await User.findOne({ resetPasswordToken: token });
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiry: { $gt: Date.now() },
+    });
 
     // Check if user is present or not
     if (!user)
