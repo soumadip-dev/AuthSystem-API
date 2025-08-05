@@ -285,4 +285,4 @@ const resetPassword = async (req, res) => {
 };
 
 // Export controllers
-export { registerUser, verifyUser, login, getMe, logout, forgotPassword };
+export { registerUser, verifyUser, login, getMe, logout, forgotPassword, resetPassword };
