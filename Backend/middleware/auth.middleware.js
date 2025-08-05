@@ -3,28 +3,19 @@ import { ENV } from '../utils/env.js';
 
 export const isLoggedIn = async (req, res, next) => {
   try {
-    // Check if a token is present in the cookies
-    console.log(req.cookies);
-
+    // Get the token from the cookies
     let token = req.cookies?.jwt;
 
     // If no token is present, return an unauthorized response
-    console.log('Token Found', token ? 'True' : 'False');
     if (!token) {
       console.log('No token found');
       return res.status(401).json({ message: 'Unauthorized', success: false });
     }
 
-    if (!ENV.JWT_SECRET) {
-      console.error('JWT_SECRET is not defined in env');
-    }
-
     // Verify the token using the secret key
     const decoded = jwt.verify(token, ENV.JWT_SECRET);
 
-    // Add the decoded user to the request object
-    console.log('Decoded Token', decoded);
-
+    // Add the decoded user to the request object for later use
     req.user = decoded;
     next();
   } catch (error) {
