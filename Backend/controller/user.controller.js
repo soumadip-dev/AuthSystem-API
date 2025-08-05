@@ -265,6 +265,11 @@ const resetPassword = async (req, res) => {
     if (!isStrongPassword(password))
       return res.status(400).json({ message: 'Password is not strong enough', success: false });
 
+    // Check if password is same as old password
+    const issamePassword = await bcrypt.compare(password, user.password);
+    if (issamePassword)
+      return res.status(401).json({ message: 'Password is same as old password', success: false });
+
     // Update the user by setting the password(hashing in pre hook) and remove reset token
     user.password = password;
     user.resetPasswordToken = undefined;
