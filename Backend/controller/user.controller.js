@@ -154,5 +154,6 @@ const login = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {};
 // Export controllers
-export { registerUser, verifyUser, login };
+export { registerUser, verifyUser, login, getMe };
