@@ -279,6 +279,7 @@ const resetPassword = async (req, res) => {
     // Update the user by setting the password(hashing in pre hook) and remove reset token
     user.password = password;
     user.resetPasswordToken = undefined;
+    user.resetPasswordExpiry = undefined;
 
     // Save the user after updating
     await user.save();
