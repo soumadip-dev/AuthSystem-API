@@ -53,7 +53,12 @@ const registerUser = async (req, res) => {
     });
 
     // Send email
-    const mailOptions = generateMailOptions({ user: newUser, token, type: 'verify' });
+    const mailOptions = generateMailOptions({
+      user: newUser,
+      token,
+      type: 'verify',
+      companyName: 'Auth System',
+    });
 
     try {
       await transporter.sendMail(mailOptions);
@@ -218,7 +223,12 @@ const forgotPassword = async (req, res) => {
     });
 
     // Send email
-    const mailOptions = generateMailOptions({ user, token, type: 'reset' });
+    const mailOptions = generateMailOptions({
+      user,
+      token,
+      type: 'reset',
+      companyName: 'Auth System',
+    });
     try {
       await transporter.sendMail(mailOptions);
     } catch (error) {
