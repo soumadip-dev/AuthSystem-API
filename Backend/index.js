@@ -3,6 +3,7 @@ import { ENV } from './utils/env.js';
 import cors from 'cors';
 import { connectDB } from './utils/db.js';
 import registerUser from './routes/user.routes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use(cors());
 
 // Routes
 app.use('/api/v1/users', registerUser);
+
+// Middleware to parse cookies
+app.use(cookieParser());
 
 // Handle GET response from root URl
 app.get('/', (req, res) => {

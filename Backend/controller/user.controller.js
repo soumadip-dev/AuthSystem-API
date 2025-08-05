@@ -126,6 +126,8 @@ const login = async (req, res) => {
 
     // Geberate JWT token
     const token = jwt.sign({ id: user._id }, ENV.JWT_SECRET, { expiresIn: '1d' });
+
+    // Store jwt token in cookie
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Something went wrong', success: false });
