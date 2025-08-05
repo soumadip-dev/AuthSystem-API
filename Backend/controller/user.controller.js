@@ -154,6 +154,20 @@ const login = async (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {};
+// Controller for getting current user
+const getMe = async (req, res) => {
+  try {
+    // Find user based on id without password
+    const user = await User.findById(req.user.id).select('-password');
+
+    if (!user) return res.status(404).json({ message: 'User not found', success: false });
+
+    res.status(200).json({ message: 'User found', success: true, user });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Something went wrong', success: false });
+  }
+};
+
 // Export controllers
 export { registerUser, verifyUser, login, getMe };
