@@ -182,5 +182,56 @@ const logout = async (req, res) => {
   }
 };
 
+// Controller for forgot password
+const forgotPassword = async (req, res) => {
+  // Get the email from the request body
+  const { email } = req.body;
+
+  // Check if the email is present or not
+  if (!email) return res.status(400).json({ message: 'Email is required', success: false });
+
+  try {
+    // Find the user based on email
+    const user = await User.findOne({ email });
+
+    // Check if the user is present or not
+    if (!user)
+      return res.status(404).json({ message: 'User not found with this email', success: false });
+
+    // Generate a random token for password reset
+    const token = crypto.randomBytes(32).toString('hex');
+
+    // Store the token inside resetPasswordToken
+    user.resetPasswordToken = token;
+
+    // Save the user after updating
+    await user.save();
+
+    // Configure email transport
+    const transporter = nodemailer.createTransport({
+      host: ENV.MAILTRAP_HOST,
+      port: ENV.MAILTRAP_PORT,
+      auth: {
+        user: ENV.MAILTRAP_USERNAME,
+        pass: ENV.MAILTRAP_PASSWORD,
+      },
+    });
+
+    // Send email
+    const mailOptions = generateMailOptions({ user, token, type: 'reset' });
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error('Email sending failed:', emailError);
+      return res.status(500).json({ message: 'Email sending failed', success: false });
+    }
+
+    res.status(200).json({ message: 'Password reset email sent successfully', success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Something went wrong', success: false });
+  }
+};
+
 // Export controllers
 export { registerUser, verifyUser, login, getMe, logout };
