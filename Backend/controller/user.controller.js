@@ -108,6 +108,7 @@ const login = async (req, res) => {
   // Check if email and password are provided
   if (!email || !password)
     return res.status(400).json({ message: 'Email and password are required', success: false });
+
   try {
     // Find user based on email
     const user = await User.findOne({ email });
@@ -120,14 +121,33 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'User is not verified', success: false });
 
     // Check if password is correct or not
-    const isPaswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPaswordCorrect)
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect)
       return res.status(401).json({ message: 'Password is incorrect', success: false });
 
-    // Geberate JWT token
-    const token = jwt.sign({ id: user._id }, ENV.JWT_SECRET, { expiresIn: '1d' });
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id, role: user.role }, ENV.JWT_SECRET, { expiresIn: '1d' });
 
     // Store jwt token in cookie
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: ENV.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000,
+    };
+    res.cookie('jwt', token, cookieOptions);
+
+    // Send success response
+    res.status(200).json({
+      message: 'User logged in successfully',
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Something went wrong', success: false });
@@ -135,4 +155,4 @@ const login = async (req, res) => {
 };
 
 // Export controllers
-export { registerUser, verifyUser };
+export { registerUser, verifyUser, login };
