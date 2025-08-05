@@ -233,5 +233,46 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+// Controller for reset password
+const resetPassword = async (req, res) => {
+  // Get reset token from URL parameters
+  const { token } = req.params;
+  const { password } = req.body;
+
+  // Check if token is present or not
+  if (!token) return res.status(400).json({ message: 'Reset token is required', success: false });
+
+  try {
+    // Find user based on reset token
+    const user = await User.findOne({ resetPasswordToken: token });
+
+    // Check if user is present or not
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: 'User not found with this reset token', success: false });
+
+    // Check if password is strong enough
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!passwordRegex.test(password))
+      return res.status(400).json({ message: 'Password is not strong enough', success: false });
+
+    // Update the user by setting the password(hashing in pre hook) and remove reset token
+    user.password = password;
+    user.resetPasswordToken = undefined;
+
+    // Save the user after updating
+    await user.save();
+
+    // Send success response
+    res.status(200).json({ message: 'Password reset successfully', success: true });
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(500)
+      .json({ message: 'Something went wrong when resetting password', success: false });
+  }
+};
+
 // Export controllers
 export { registerUser, verifyUser, login, getMe, logout, forgotPassword };
