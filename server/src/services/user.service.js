@@ -1,4 +1,4 @@
-import User from '../model/User.model';
+import User from '../model/User.model.js';
 import { isValidEmail, isStrongPassword } from '../utils/validation.js';
 import { ENV } from '../config/env.js';
 import jwt from 'jsonwebtoken';

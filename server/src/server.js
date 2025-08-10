@@ -1,5 +1,5 @@
-import { ENV } from './utils/env.js';
-import { connectDB } from './utils/db.js';
+import { ENV } from './config/env.js';
+import { connectDB } from './config/db.js';
 import app from './app.js';
 
 const PORT = ENV.PORT || 8080;
