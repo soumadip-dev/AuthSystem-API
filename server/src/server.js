@@ -1,7 +1,7 @@
 import express from 'express';
-import { ENV } from './src/utils/env.js';
+import { ENV } from './utils/env.js';
 import cors from 'cors';
-import { connectDB } from './src/utils/db.js';
+import { connectDB } from './utils/db.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
