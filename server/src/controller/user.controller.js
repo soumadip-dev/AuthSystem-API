@@ -1,6 +1,5 @@
-import { registerService } from '../services/user.service.js';
+import { registerService, loginService } from '../services/user.service.js';
 import { ENV } from '../config/env.js';
-import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -36,28 +35,9 @@ const loginUser = async (req, res) => {
   // Get fields from request body
   const { email, password } = req.body;
 
-  // Check if email and password are provided
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required', success: false });
-  }
-
   try {
-    // Find the user based on email
-    const user = await User.findOne({ email });
-
-    // Chelck if user exists or not
-    if (!user) {
-      return res.status(404).json({ message: 'User not found', success: false });
-    }
-
-    // Check if password is correct
-    const isPassewordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPassewordCorrect) {
-      return res.status(401).json({ message: 'Invalid password', success: false });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, ENV.JWT_SECRET, { expiresIn: '7d' });
+    // Get the user and token from loginService
+    const { user, token } = await loginService(email, password);
 
     // Store JWT token in cookie
     const cookieOptions = {

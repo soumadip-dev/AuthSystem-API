@@ -37,3 +37,31 @@ export const registerService = async (name, email, password) => {
 
   return { newUser, token };
 };
+
+//* Service for logging in a user
+export const loginService = async (name, email, password) => {
+  // Check if email and password are provided
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+
+  // Find the user based on email
+  const user = await User.findOne({ email });
+
+  // Chelck if user exists or not
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // Check if password is correct
+  const isPassewordCorrect = await bcrypt.compare(password, user.password);
+  if (!isPassewordCorrect) {
+    throw new Error('Invalid password');
+  }
+
+  // Generate JWT token
+  const token = jwt.sign({ id: user._id }, ENV.JWT_SECRET, { expiresIn: '7d' });
+
+  // Return user and token
+  return { user, token };
+};
