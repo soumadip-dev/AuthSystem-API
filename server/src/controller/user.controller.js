@@ -36,6 +36,9 @@ const registerUser = async (req, res) => {
     // If user is not created return error
     if (!newUser) return res.status(500).json({ message: 'User not registered', success: false });
 
+    // Generate JWT token
+    const token = jwt.sign({ id: newUser._id }, ENV.JWT_SECRET, { expiresIn: '7d' });
+
     // Store JWT token in cookie
     const cookieOptions = {
       httpOnly: true,
