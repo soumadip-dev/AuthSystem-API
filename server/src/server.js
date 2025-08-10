@@ -1,25 +1,8 @@
-import express from 'express';
 import { ENV } from './utils/env.js';
-import cors from 'cors';
 import { connectDB } from './utils/db.js';
-import cookieParser from 'cookie-parser';
-
-const app = express();
+import app from './app.js';
 
 const PORT = ENV.PORT || 8080;
-
-//* Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    credentials: true,
-  })
-);
-app.use(cookieParser());
-
-//* Root Route
-app.use('/', (req, res) => res.send('<h1>Hello from authentication backend</h1>'));
 
 //* Function to connect the DB and start the server
 const startServer = async () => {
@@ -33,4 +16,5 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
 startServer();
