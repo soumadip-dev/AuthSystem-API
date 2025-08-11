@@ -140,8 +140,11 @@ const sendVerificationEmail = async (req, res) => {
 
 //* Controller to verify user with the OTP
 const verifyUser = async (req, res) => {
-  // Get fields from request body
-  const { userId, otp } = req.body;
+  // Get otp from request body
+  const { otp } = req.body;
+
+  // Get userId from request.user attached by userAuth middleware
+  const { userId } = req.user;
 
   try {
     await verifyUserService(userId, otp);
