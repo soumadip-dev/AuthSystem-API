@@ -1,14 +1,6 @@
 import { ENV } from '../config/env.config.js';
 
-/**
- * Generates beautifully styled email templates for various user scenarios
- * @param {Object} params - Email parameters
- * @param {Object} params.user - User information
- * @param {string} params.otp - One-time password
- * @param {string} params.type - Email type (welcome, verifyUser, forgetPassword)
- * @param {string} params.companyName - Name of the company/service
- * @returns {Object} Email options object
- */
+//* Function to generate mail options
 export default function generateMailOptions({ user, otp, type, companyName }) {
   // Modern color palette
   const colors = {
