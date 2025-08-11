@@ -162,5 +162,22 @@ const verifyUser = async (req, res) => {
   }
 };
 
+//* Controller to check if user is authenticated
+const isAuthenticated = (req, res) => {
+  try {
+    // Send success response
+    return res.status(200).json({
+      message: 'User is authenticated',
+      success: true,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
-export { registerUser, loginUser, logoutUser, sendVerificationEmail, verifyUser };
+export { registerUser, loginUser, logoutUser, sendVerificationEmail, verifyUser, isAuthenticated };
