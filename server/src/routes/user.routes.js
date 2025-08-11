@@ -5,6 +5,7 @@ import {
   logoutUser,
   sendVerificationEmail,
   verifyUser,
+  isAuthenticated,
 } from '../controller/user.controller.js';
 import { userAuth } from '../middleware/user.middleware.js';
 
@@ -17,6 +18,7 @@ router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.post('/send-verification-email', userAuth, sendVerificationEmail);
 router.post('/verify-user', userAuth, verifyUser);
+router.post('/is-auth', userAuth, isAuthenticated);
 
 //* Export the router
 export default router;
