@@ -4,8 +4,9 @@ import { ENV } from '../config/env.config.js';
 //* Middleware for user authentication
 export const userAuth = async (req, res, next) => {
   try {
-    // Get the token from the cookies
-    let token = req.cookies?.authToken;
+    console.log('All cookies:', req.cookies); // Debug: Check all received cookies
+    const token = req.cookies?.authToken;
+    console.log('Extracted token:', token); // Debug: Verify token extraction
 
     // If no token is present, respond with 401 Unauthorized
     if (!token) {
@@ -18,7 +19,7 @@ export const userAuth = async (req, res, next) => {
 
     // If the token contains a user id, attach it to the request body for downstream handlers
     if (id) {
-      req.body.userId = id;
+      req.user = { userId: id };
     } else {
       // If no id is found in token payload, respond with 401 Unauthorized
       return res.status(401).json({ message: 'Unauthorized. Login again', success: false });
