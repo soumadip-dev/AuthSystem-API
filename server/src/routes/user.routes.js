@@ -6,6 +6,7 @@ import {
   sendVerificationEmail,
   verifyUser,
 } from '../controller/user.controller.js';
+import { userAuth } from '../middleware/user.middleware.js';
 
 //* Create a new Express router
 const router = Router();
@@ -14,8 +15,8 @@ const router = Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
-router.post('/send-verification-email', sendVerificationEmail);
-router.post('/verify-user', verifyUser);
+router.post('/send-verification-email', userAuth, sendVerificationEmail);
+router.post('/verify-user', userAuth, verifyUser);
 
 //* Export the router
 export default router;
