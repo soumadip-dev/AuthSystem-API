@@ -7,6 +7,7 @@ import {
 import { ENV } from '../config/env.config.js';
 import generateMailOptions from '../utils/mailTemplates.utils.js';
 import transporter from '../config/nodemailer.config.js';
+import User from '../model/User.model.js';
 
 //* Controller for registering a user
 const registerUser = async (req, res) => {
@@ -179,5 +180,69 @@ const isAuthenticated = (req, res) => {
   }
 };
 
+//* Controller to send password reset email to the user's email
+const sendPasswordResetEmail = async (req, res) => {
+  // Get the email from body
+  const { email } = req.body;
+
+  // Chek if email is provided
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required', success: false });
+  }
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found', success: false });
+    }
+
+    // Generate OTP
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    // update user resetPasswordOtp and resetPasswordOtpExpiry
+    user.resetPasswordOtp = otp;
+    user.resetPasswordOtpExpiry = Date.now() + 24 * 60 * 60 * 1000;
+
+    // Save the updated user
+    await user.save();
+
+    // Send password reset email to user
+    const mailOptions = generateMailOptions({
+      user,
+      otp,
+      type: 'forgetPassword',
+      companyName: 'Auth System',
+    });
+
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      return res.status(500).json({ message: 'Email sending failed', success: false });
+    }
+
+    // Send success response
+    return res.status(200).json({
+      message: 'Password reset email sent successfully',
+      success: true,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: error.message || 'Something went wrong when logging out',
+      success: false,
+    });
+  }
+};
+
 //* Export controllers
-export { registerUser, loginUser, logoutUser, sendVerificationEmail, verifyUser, isAuthenticated };
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  sendVerificationEmail,
+  verifyUser,
+  isAuthenticated,
+  sendPasswordResetEmail,
+};
