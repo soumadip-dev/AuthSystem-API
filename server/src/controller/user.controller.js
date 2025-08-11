@@ -104,7 +104,8 @@ const logoutUser = async (req, res) => {
 //* Controller to send verification OTP to the user's email
 const sendVerificationEmail = async (req, res) => {
   // Get fields from request body
-  const { userId } = req.body;
+  const { userId } = req.user;
+
   try {
     const { user, otp } = await sendVerificationEmailService(userId);
 
