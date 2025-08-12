@@ -1,8 +1,10 @@
 import { useState, type FC } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Login: FC = () => {
+  const navigate = useNavigate();
   const [state, setState] = useState<'signup' | 'login'>('signup');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
@@ -12,6 +14,7 @@ const Login: FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400 animate-gradient">
       <img
+        onClick={() => navigate('/')}
         src={assets.logo}
         alt="logo"
         className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer transition-transform hover:scale-105"
@@ -74,16 +77,15 @@ const Login: FC = () => {
             </button>
           </div>
 
-          {state === 'login' && (
-            <div className="flex justify-end -mt-2">
-              <button
-                type="button"
-                className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                Forgot Password?
-              </button>
-            </div>
-          )}
+          <div className="flex justify-end -mt-2">
+            <button
+              type="button"
+              className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+              onClick={() => navigate('/forgot-password')}
+            >
+              Forgot Password?
+            </button>
+          </div>
 
           <button
             type="submit"
