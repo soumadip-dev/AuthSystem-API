@@ -18,7 +18,7 @@ app.use(
 app.use(cookieParser());
 
 //* Root Route
-app.get('/', (req, res) => res.send('<h1>Hello from authentication backend</h1>'));
+app.get('/', (req, res) => res.send('Hello from authentication backend'));
 
 //* Routes
 app.use('/api/v1/users', auth_routes);
