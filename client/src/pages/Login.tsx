@@ -2,6 +2,7 @@ import { useState, type FC } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import type { PasswordChecks } from '../types/global';
 
 const Login: FC = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState('');
 
   // Password strength checks
-  const passwordChecks = {
+  const passwordChecks: PasswordChecks = {
     length: password.length >= 8,
     upper: /[A-Z]/.test(password),
     lower: /[a-z]/.test(password),
@@ -24,7 +25,7 @@ const Login: FC = () => {
   const strength = Math.round((Object.values(passwordChecks).filter(Boolean).length / 5) * 100);
 
   // Get strength label with color
-  const getStrengthLabel = () => {
+  const getStrengthLabel = (): { text: string; color: string } => {
     if (strength === 100) return { text: 'Very Strong', color: 'text-emerald-400' };
     if (strength >= 80) return { text: 'Strong', color: 'text-green-400' };
     if (strength >= 60) return { text: 'Good', color: 'text-blue-400' };
@@ -33,7 +34,7 @@ const Login: FC = () => {
   };
 
   // Get strength meter color
-  const getStrengthMeterColor = () => {
+  const getStrengthMeterColor = (): string => {
     if (strength === 100) return 'bg-emerald-400';
     if (strength >= 80) return 'bg-green-400';
     if (strength >= 60) return 'bg-blue-400';
@@ -70,7 +71,7 @@ const Login: FC = () => {
                 required
                 className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
               />
             </div>
           )}
@@ -83,7 +84,7 @@ const Login: FC = () => {
               required
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             />
           </div>
 
@@ -95,7 +96,7 @@ const Login: FC = () => {
               required
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             />
             <button
               type="button"
