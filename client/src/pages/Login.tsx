@@ -1,8 +1,10 @@
 import { useState, type FC } from 'react';
 import { assets } from '../assets/assets';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login: FC = () => {
   const [state, setState] = useState<'signup' | 'login'>('signup');
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400 animate-gradient">
@@ -48,11 +50,18 @@ const Login: FC = () => {
           <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-[#333A5C]/80 transition-all duration-300 focus-within:bg-[#333A5C] focus-within:ring-2 focus-within:ring-indigo-500">
             <img src={assets.lock_icon} alt="password" className="w-4 opacity-80" />
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               required
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-indigo-300 hover:text-indigo-200 transition-colors"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           {state === 'login' && (
