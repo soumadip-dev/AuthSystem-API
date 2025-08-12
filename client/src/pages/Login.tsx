@@ -5,6 +5,9 @@ import { Eye, EyeOff } from 'lucide-react';
 const Login: FC = () => {
   const [state, setState] = useState<'signup' | 'login'>('signup');
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 via-purple-100 to-purple-400 animate-gradient">
@@ -33,6 +36,8 @@ const Login: FC = () => {
                 placeholder="Full Name"
                 required
                 className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
+                value={name}
+                onChange={e => setName(e.target.value)}
               />
             </div>
           )}
@@ -44,6 +49,8 @@ const Login: FC = () => {
               placeholder="Email address"
               required
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
             />
           </div>
 
@@ -54,6 +61,8 @@ const Login: FC = () => {
               placeholder="Password"
               required
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
             />
             <button
               type="button"
