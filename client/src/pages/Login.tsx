@@ -2,15 +2,65 @@ import { useState, type FC } from 'react';
 import { assets } from '../assets/assets';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import type { PasswordChecks } from '../types/global';
+import type { PasswordChecks, RegisterCredentials, RegisterResponse } from '../types/global';
+import { useMutation } from '@tanstack/react-query';
+import { registerUser, loginUser } from '../api/auth.api';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login: FC = () => {
   const navigate = useNavigate();
   const [state, setState] = useState<'signup' | 'login'>('signup');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('soumadipmajila@gmail.com');
+  const [password, setPassword] = useState('8Uh9M96cZq$');
+
+  const { mutate: registerMutate, isPending: isRegistering } = useMutation<
+    RegisterResponse,
+    Error,
+    RegisterCredentials
+  >({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      setName('');
+      setEmail('');
+      setPassword('');
+      toast.success('Registration successful! Please check your email for verification.');
+      navigate('/email-verify');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Registration failed. Please try again.');
+    },
+  });
+
+  const { mutate: loginMutate, isPending: isLoggingIn } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: () => {
+      toast.success('Login successful! Redirecting...');
+      navigate('/');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Login failed. Please check your credentials.');
+    },
+  });
+
+  const isPending = isRegistering || isLoggingIn;
+
+  // Form submission handler
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (state === 'signup') {
+      if (strength < 80) {
+        toast.warning('Please use a stronger password');
+        return;
+      }
+      registerMutate({ name, email, password });
+    } else {
+      loginMutate({ email, password });
+    }
+  };
 
   // Password strength checks
   const passwordChecks: PasswordChecks = {
@@ -61,7 +111,7 @@ const Login: FC = () => {
           </p>
         </div>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {state === 'signup' && (
             <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-[#333A5C]/80 focus-within:bg-[#333A5C] focus-within:ring-2 focus-within:ring-indigo-500">
               <img src={assets.person_icon} alt="person" className="w-4 opacity-80" />
@@ -72,6 +122,7 @@ const Login: FC = () => {
                 className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                disabled={isPending}
               />
             </div>
           )}
@@ -85,6 +136,7 @@ const Login: FC = () => {
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              disabled={isPending}
             />
           </div>
 
@@ -97,12 +149,14 @@ const Login: FC = () => {
               className="bg-transparent outline-none w-full placeholder-indigo-300/50 text-white"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              disabled={isPending}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               className="text-indigo-300 hover:text-indigo-200"
+              disabled={isPending}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -149,6 +203,7 @@ const Login: FC = () => {
                 type="button"
                 className="text-xs text-indigo-400 hover:text-indigo-300"
                 onClick={() => navigate('/reset-password')}
+                disabled={isPending}
               >
                 Forgot Password?
               </button>
@@ -157,9 +212,40 @@ const Login: FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98]"
+            disabled={isPending}
+            className={`w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all ${
+              isPending ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
-            {state === 'signup' ? 'Sign Up' : 'Login'}
+            {isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                {state === 'signup' ? 'Signing Up...' : 'Logging In...'}
+              </span>
+            ) : state === 'signup' ? (
+              'Sign Up'
+            ) : (
+              'Login'
+            )}
           </button>
 
           <div
@@ -171,8 +257,9 @@ const Login: FC = () => {
               {state === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
               <button
                 type="button"
-                onClick={() => setState(state === 'signup' ? 'login' : 'signup')}
+                onClick={() => !isPending && setState(state === 'signup' ? 'login' : 'signup')}
                 className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2"
+                disabled={isPending}
               >
                 {state === 'signup' ? 'Login' : 'Sign Up'}
               </button>
