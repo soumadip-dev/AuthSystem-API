@@ -32,3 +32,9 @@ export const getCurrentUser = async (): Promise<GetUserResponse> => {
   const response = await axiosInstance.get('/api/v1/users/user-details');
   return response.data;
 };
+
+// Mutation for checking if user is logged in
+export const isAuthenticated = async (): Promise<ApiResponse> => {
+  const response = await axiosInstance.get('/api/v1/users/is-auth');
+  return response.data;
+};
