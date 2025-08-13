@@ -18,6 +18,7 @@ export interface AppContextType {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   userData: UserDataType | null;
   setUserData: React.Dispatch<React.SetStateAction<UserDataType | null>>;
+  refetch: () => void;
 }
 
 export interface ApiResponse {
