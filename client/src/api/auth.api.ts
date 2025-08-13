@@ -1,5 +1,10 @@
 import axiosInstance from '../utils/axiosInstance';
-import type { RegisterCredentials, ApiResponse, LoginCredentials } from '../types/global';
+import type {
+  RegisterCredentials,
+  ApiResponse,
+  LoginCredentials,
+  GetUserResponse,
+} from '../types/global';
 
 // Mutation for register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
@@ -19,5 +24,11 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
     password: credentials.password,
   });
   console.log(response);
+  return response.data;
+};
+
+// Query for getting current user
+export const getCurrentUser = async (): Promise<GetUserResponse> => {
+  const response = await axiosInstance.get('/api/v1/users/user-details');
   return response.data;
 };
