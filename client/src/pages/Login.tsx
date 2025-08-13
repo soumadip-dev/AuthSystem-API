@@ -25,7 +25,7 @@ const Login: FC = () => {
 
   const context = useContext(AppContext);
   if (!context) throw new Error('Login must be used within an AppContextProvider');
-  const { setIsLoggedIn } = context;
+  const { setIsLoggedIn, refetchCurrentUser } = context;
 
   const { mutate: registerMutate, isPending: isRegistering } = useMutation<
     ApiResponse,
@@ -38,7 +38,9 @@ const Login: FC = () => {
       setEmail('');
       setPassword('');
       setIsLoggedIn(true);
-      toast.success('Registration successful! Please check your email for verification.');
+      refetchCurrentUser();
+      navigate('/');
+      toast.success('Registration successful');
     },
     onError: (error: ApiError) => {
       const errorMessage =
@@ -55,7 +57,9 @@ const Login: FC = () => {
     mutationFn: loginUser,
     onSuccess: () => {
       setIsLoggedIn(true);
+      refetchCurrentUser();
       toast.success('Login successful! Redirecting...');
+      navigate('/');
     },
     onError: (error: ApiError) => {
       // Remove the any type
