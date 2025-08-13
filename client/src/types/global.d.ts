@@ -25,6 +25,10 @@ export interface ApiResponse {
   success: boolean;
 }
 
+export interface GetUserResponse extends ApiResponse {
+  userData: UserDataType;
+}
+
 export interface ApiError {
   message: string;
   success: boolean;
