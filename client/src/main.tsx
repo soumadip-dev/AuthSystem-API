@@ -9,12 +9,12 @@ import { AppContextProvider } from './context/AppContext';
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <AppContextProvider>
-      <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <AppContextProvider>
         <App />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </AppContextProvider>
-  </BrowserRouter>
+      </AppContextProvider>
+    </BrowserRouter>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );
