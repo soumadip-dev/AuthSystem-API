@@ -1,6 +1,8 @@
 import type { FC, ReactNode } from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import type { AppContextType, UserDataType } from '../types/global';
+import { useQuery } from '@tanstack/react-query';
+import { getCurrentUser } from '../api/auth.api';
 
 // Create the application context with an initial value of undefined
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -26,6 +28,18 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
   // State to store the currently logged-in user's data
   const [userData, setUserData] = useState<UserDataType | null>(null);
 
+  const { data, refetch } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUser,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUserData(data.userData);
+      setIsLoggedIn(true);
+    }
+  }, [data]);
+
   // Bundle all the values and updater functions into a single object
   const value: AppContextType = {
     backendUrl,
@@ -33,6 +47,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({ children }) =>
     setIsLoggedIn,
     userData,
     setUserData,
+    refetchCurrentUser: refetch,
   };
 
   // Provide the context value to all child components
