@@ -6,7 +6,6 @@ const Header: FC = () => {
   const context = useContext(AppContext);
   if (!context) throw new Error('Login must be used within an AppContextProvider');
   const { userData, isLoggedIn } = context;
-  console.log(userData);
 
   return (
     <div className="flex flex-col items-center mt-20 px-4 text-center text-gray-800 animate-fadeIn">
