@@ -14,13 +14,22 @@ import axios from 'axios';
 
 //* register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
-  const response = await axiosInstance.post('/api/v1/users/register', {
-    name: credentials.name,
-    email: credentials.email,
-    password: credentials.password,
-  });
-  console.log(response);
-  return response.data;
+  try {
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/register', {
+      name: credentials.name,
+      email: credentials.email,
+      password: credentials.password,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
+    }
+    return {
+      success: false,
+      message: 'Network error occurred',
+    };
+  }
 };
 
 //* login user
