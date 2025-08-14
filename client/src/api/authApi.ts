@@ -10,7 +10,7 @@ import type {
 } from '../types/global';
 
 //* Import axios
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 //* register user
 export const registerUser = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
@@ -79,8 +79,8 @@ export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse
     return response.data;
   } catch (error: unknown) {
     // If the server responded with an error message, return it
-    if (error.response?.data) {
-      return error.response.data;
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
     }
     // Otherwise return a generic error
     return {
@@ -105,8 +105,8 @@ export const resetPassword = async (
     return response.data;
   } catch (error: unknown) {
     // If the server responded with an error message, return it
-    if (error.response?.data) {
-      return error.response.data;
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
     }
     // Otherwise return a generic error
     return {
