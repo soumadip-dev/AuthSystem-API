@@ -13,8 +13,8 @@ const Login: FC = () => {
   const [state, setState] = useState<'signup' | 'login'>('signup');
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('soumadipmajila@gmail.com');
-  const [password, setPassword] = useState('8Uh9M96cZq$');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const context = useContext(AppContext);
