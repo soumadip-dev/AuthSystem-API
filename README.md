@@ -1,8 +1,4 @@
-<h1 align="center">
-  <br>
-  User Authentication System (MERN)
-  <br>
-</h1>
+# <h1 align="center">User Authentication System (MERN)</h1>
 
 <div align="center">
   <a href="https://github.com/soumadip-dev">
@@ -31,7 +27,7 @@
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React,Tailwind CSS, Tanstack Query, React Router
+- **Frontend**: React, Tailwind CSS, Tanstack Query, React Router
 - **Backend**: Node.js with Express – RESTful API structure
 - **Database**: MongoDB with Mongoose – flexible document-based storage
 - **Email Service**: Nodemailer
@@ -41,48 +37,67 @@
 
 ## 🛠️ Installation & Setup
 
-1. **Clone the repository**:
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB Atlas account (or local MongoDB instance)
+
+### Setup
+
+1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/soumadip-dev/Auth-Api-Mongo.git
-   cd Auth-Api-Mongo
+   git clone https://github.com/soumadip-dev/AuthSystem-MERN.git
+   cd AuthSystem-MERN
    ```
 
-2. **Install dependencies**:
+2. **Backend Setup**
 
    ```bash
+   cd server
    npm install
    ```
 
-3. **Configure environment variables**:
+   Create a `.env` file in the `server` directory with:
 
-   - Create a `.env` file in the root directory.
-   - Add the following variables (replace placeholders with your actual values):
-
-     ```env
-     ########## SERVER CONFIGURATION ##########
-     PORT=8000
-
-     ########## DATABASE CONFIGURATION ##########
-     MONGO_URL=your_mongodb_connection_string
-
-     ########## BASE URL ##########
-     BASE_URL=http://localhost:8000
-
-     ########## MAILTRAP CONFIGURATION ##########
-     MAILTRAP_HOST=sandbox.smtp.mailtrap.io
-     MAILTRAP_PORT=2525
-     MAILTRAP_USERNAME=your_mailtrap_username
-     MAILTRAP_PASSWORD=your_mailtrap_password
-     MAILTRAP_SENDEREMAIL=noreply@yourapp.com
-
-     ########## JWT CONFIGURATION ##########
-     JWT_SECRET_KEY=your_jwt_secret_key
-     ```
-
-4. **Start the server**:
-   ```bash
-   npm run start
+   ```env
+   PORT=8080
+   MONGO_URI=<YOUR_MONGODB_URI>
+   BASE_URL=http://127.0.0.1:8080
+   FRONTEND_URL=http://localhost:5173
+   NODE_ENV=development
+   BREVO_HOST=smtp.brevo.com
+   BREVO_PORT=587
+   BREVO_USERNAME=<your_email_address>
+   BREVO_PASSWORD=<your_email_password>
+   BREVO_SENDEREMAIL=<your_email_address>
+   JWT_SECRET=<your_secret_key>
    ```
+
+3. **Frontend Setup**
+
+   ```bash
+   cd ../client
+   npm install
+   ```
+
+   Create a `.env` file in the `client` directory with:
+
+   ```env
+   VITE_BACKEND_URL=<YOUR_BACKEND_URL>
+   ```
+
+4. **Run the Application**
+   - Backend (Terminal 1):
+     ```bash
+     cd server
+     npm run dev
+     ```
+   - Frontend (Terminal 2):
+     ```bash
+     cd ../client
+     npm run dev
+     ```
 
 ---
