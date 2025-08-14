@@ -59,11 +59,13 @@ const ResetPassword: FC = () => {
     try {
       const response = (await sendPasswordResetEmail(email)) as ApiResponse;
       if (response.success) toast.success(response.message);
-      else toast.error(response.message);
+      else throw new Error(response.message);
       setIsEmailSent(true);
     } catch (error) {
       console.error(error);
-      toast.error('Failed to send reset email. Please try again.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to send reset email. Please try again.'
+      );
     } finally {
       setIsEmailLoading(false);
     }
@@ -84,11 +86,13 @@ const ResetPassword: FC = () => {
     try {
       const response = (await resetPassword(email, otp, newPassword)) as ApiResponse;
       if (response.success) toast.success(response.message);
-      else toast.error(response.message);
+      else throw new Error(response.message);
       navigate('/login');
-    } catch (error: unknown) {
-      console.error((error as Error).message);
-      toast.error('Failed to reset password. Please try again.');
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to reset password. Please try again.'
+      );
+      navigate('/login');
     } finally {
       setIsPasswordLoading(false);
     }
