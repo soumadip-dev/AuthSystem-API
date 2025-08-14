@@ -122,8 +122,18 @@ export const sendVerificationEmail = async (): Promise<ApiResponse> => {
 
 //* verify user with otp
 export const verifyUser = async (otp: string): Promise<ApiResponse> => {
-  const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
-  return response.data;
+  try {
+    const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return error.response.data as ApiResponse;
+    }
+    return {
+      success: false,
+      message: 'Network error occurred',
+    };
+  }
 };
 
 //* Send password reset email
