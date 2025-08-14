@@ -35,11 +35,10 @@ export const registerUser = async (credentials: RegisterCredentials): Promise<Ap
 //* login user
 export const loginUser = async (credentials: LoginCredentials): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.post('/api/v1/users/login', {
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/login', {
       email: credentials.email,
       password: credentials.password,
     });
-    console.log(response);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -55,7 +54,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<ApiRespo
 //* getting current user
 export const getCurrentUser = async (): Promise<GetUserResponse> => {
   try {
-    const response = await axiosInstance.get('/api/v1/users/user-details');
+    const response = await axiosInstance.get<GetUserResponse>('/api/v1/users/user-details');
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -64,7 +63,7 @@ export const getCurrentUser = async (): Promise<GetUserResponse> => {
     return {
       success: false,
       message: 'Network error occurred',
-      user: null,
+      userData: null,
     };
   }
 };
@@ -72,7 +71,7 @@ export const getCurrentUser = async (): Promise<GetUserResponse> => {
 //* checking if user is logged in
 export const isAuthenticated = async (): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.get('/api/v1/users/is-auth');
+    const response = await axiosInstance.get<ApiResponse>('/api/v1/users/is-auth');
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -91,7 +90,7 @@ export const isAuthenticated = async (): Promise<ApiResponse> => {
 //* logout user
 export const logoutUser = async (): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.post('/api/v1/users/logout');
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/logout');
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -107,7 +106,7 @@ export const logoutUser = async (): Promise<ApiResponse> => {
 //* send verification email
 export const sendVerificationEmail = async (): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.post('/api/v1/users/send-verification-email');
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/send-verification-email');
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -123,7 +122,7 @@ export const sendVerificationEmail = async (): Promise<ApiResponse> => {
 //* verify user with otp
 export const verifyUser = async (otp: string): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.post('/api/v1/users/verify-user', { otp });
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/verify-user', { otp });
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data) {
@@ -144,11 +143,9 @@ export const sendPasswordResetEmail = async (email: string): Promise<ApiResponse
     });
     return response.data;
   } catch (error: unknown) {
-    // If the server responded with an error message, return it
     if (axios.isAxiosError(error) && error.response?.data) {
       return error.response.data as ApiResponse;
     }
-    // Otherwise return a generic error
     return {
       success: false,
       message: 'Network error occurred',
@@ -163,18 +160,16 @@ export const resetPassword = async (
   newPassword: string
 ): Promise<ApiResponse> => {
   try {
-    const response = await axiosInstance.post('/api/v1/users/reset-password', {
+    const response = await axiosInstance.post<ApiResponse>('/api/v1/users/reset-password', {
       email,
       otp,
       newPassword,
     });
     return response.data;
   } catch (error: unknown) {
-    // If the server responded with an error message, return it
     if (axios.isAxiosError(error) && error.response?.data) {
       return error.response.data as ApiResponse;
     }
-    // Otherwise return a generic error
     return {
       success: false,
       message: 'Network error occurred',
