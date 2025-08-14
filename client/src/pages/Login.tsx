@@ -50,11 +50,11 @@ const Login: FC = () => {
       const response = await loginUser(credentials);
       if (response.success) {
         toast.success(response.message);
+        navigate('/');
       } else {
         toast.error(response.message);
       }
       await checkAuthAndFetchUser(); // Fetch user data after successful login
-      navigate('/');
     } catch (error: unknown) {
       setEmail('');
       setPassword('');
