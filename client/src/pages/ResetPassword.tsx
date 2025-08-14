@@ -19,6 +19,9 @@ const ResetPassword: FC = () => {
   const [otp, setOtp] = useState('');
   const [isOtpSubmited, setIsOtpSubmited] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [isOtpLoading, setIsOtpLoading] = useState(false);
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>, index: number) => {
     const value = e.currentTarget.value;
@@ -52,6 +55,7 @@ const ResetPassword: FC = () => {
 
   const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsEmailLoading(true);
     try {
       const response = (await sendPasswordResetEmail(email)) as ApiResponse;
       if (response.success) toast.success(response.message);
@@ -60,18 +64,23 @@ const ResetPassword: FC = () => {
     } catch (error) {
       console.error(error);
       toast.error('Failed to send reset email. Please try again.');
+    } finally {
+      setIsEmailLoading(false);
     }
   };
 
   const onSubmitOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsOtpLoading(true);
     const otpArray = inputRefs.current.map(input => input?.value);
     setOtp(otpArray.join(''));
     setIsOtpSubmited(true);
+    setIsOtpLoading(false);
   };
 
   const onSubmitNewPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsPasswordLoading(true);
     try {
       const response = (await resetPassword(email, otp, newPassword)) as ApiResponse;
       if (response.success) toast.success(response.message);
@@ -80,6 +89,8 @@ const ResetPassword: FC = () => {
     } catch (error: unknown) {
       console.error((error as Error).message);
       toast.error('Failed to reset password. Please try again.');
+    } finally {
+      setIsPasswordLoading(false);
     }
   };
 
@@ -124,9 +135,38 @@ const ResetPassword: FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+              disabled={isEmailLoading}
+              className={`w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all flex items-center justify-center ${
+                isEmailLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Submit
+              {isEmailLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                'Submit'
+              )}
             </button>
           </form>
         </div>
@@ -165,9 +205,38 @@ const ResetPassword: FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+              disabled={isOtpLoading}
+              className={`w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all flex items-center justify-center ${
+                isOtpLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Reset Password
+              {isOtpLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Verifying...
+                </>
+              ) : (
+                'Reset Password'
+              )}
             </button>
           </form>
         </div>
@@ -210,9 +279,38 @@ const ResetPassword: FC = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all"
+              disabled={isPasswordLoading}
+              className={`w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] transition-all flex items-center justify-center ${
+                isPasswordLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             >
-              Update Password
+              {isPasswordLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Updating...
+                </>
+              ) : (
+                'Update Password'
+              )}
             </button>
           </form>
         </div>
