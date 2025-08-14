@@ -39,7 +39,6 @@ const registerUser = async (req, res) => {
     try {
       await transporter.sendMail(mailOptions);
     } catch (emailError) {
-      console.error('Email sending failed:', emailError);
       return res.status(500).json({ message: 'Email sending failed', success: false });
     }
 
@@ -49,7 +48,6 @@ const registerUser = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error.message);
     res.status(400).json({ message: error.message || 'Something went wrong', success: false });
   }
 };
@@ -78,7 +76,6 @@ const loginUser = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({ message: error.message || 'Something went wrong', success: false });
   }
 };
@@ -96,7 +93,6 @@ const logoutUser = async (req, res) => {
     // return success message
     return res.status(200).json({ message: 'User logged out successfully', success: true });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -123,8 +119,9 @@ const sendVerificationEmail = async (req, res) => {
     try {
       await transporter.sendMail(mailOptions);
     } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      return res.status(500).json({ message: 'Email sending failed', success: false });
+      return res
+        .status(500)
+        .json({ message: emailError.message || 'Email sending failed', success: false });
     }
 
     // Send success response
@@ -133,7 +130,6 @@ const sendVerificationEmail = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -157,7 +153,6 @@ const verifyUser = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -174,7 +169,6 @@ const isAuthenticated = (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -202,8 +196,9 @@ const sendPasswordResetEmail = async (req, res) => {
     try {
       await transporter.sendMail(mailOptions);
     } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      return res.status(500).json({ message: 'Email sending failed', success: false });
+      return res
+        .status(500)
+        .json({ message: emailError.message || 'Email sending failed', success: false });
     }
 
     // Send success response
@@ -212,7 +207,6 @@ const sendPasswordResetEmail = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -235,7 +229,6 @@ const resetPassword = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
@@ -258,7 +251,6 @@ const getUserDetails = async (req, res) => {
       userData: { name: user.name, email: user.email, isVerified: user.isVerified },
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({
       message: error.message || 'Something went wrong when logging out',
       success: false,
