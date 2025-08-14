@@ -51,13 +51,13 @@ export const loginService = async (email, password) => {
 
   // Chelck if user exists or not
   if (!user) {
-    throw new Error('User not found');
+    throw new Error('Invalid Credentials');
   }
 
   // Check if password is correct
   const isPassewordCorrect = await bcrypt.compare(password, user.password);
   if (!isPassewordCorrect) {
-    throw new Error('Invalid password');
+    throw new Error('Invalid Credentials');
   }
 
   // Generate JWT token
