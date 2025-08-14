@@ -96,10 +96,22 @@ export const resetPassword = async (
   otp: string,
   newPassword: string
 ): Promise<ApiResponse> => {
-  const response = await axiosInstance.post('/api/v1/users/reset-password', {
-    email,
-    otp,
-    newPassword,
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.post('/api/v1/users/reset-password', {
+      email,
+      otp,
+      newPassword,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    // If the server responded with an error message, return it
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    // Otherwise return a generic error
+    return {
+      success: false,
+      message: 'Network error occurred',
+    };
+  }
 };
